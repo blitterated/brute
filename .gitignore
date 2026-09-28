@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# I dislike these files
+.DS_Store
+._*
+Thumbs.db
+
+# [Neo]Vim temp and backup files
+*~
+\#*#
+*.swo
+*.swp

@@ -1,7 +1,10 @@
 import json
 import os
 import subprocess
-import brute
+import brute.model_client.client as client
+
+
+CLIENT = client.create()
 
 
 TOOL_SCHEMAS = [

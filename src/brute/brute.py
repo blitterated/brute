@@ -151,7 +151,7 @@ TOOLS = {
 def run_tool(tool_call):
     name = tool_call.function.name
     args = json.loads(tool_call.function.arguments)
-    print(f"  tool: {name}({args})")
+    print(f"  tool: {name}({args}\n")
 
     try:
         return str(TOOLS[name](**args))
@@ -186,16 +186,17 @@ def run_agent(messages):
 # Loop for users to continue prompting the model.
 def main():
     messages = [{"role": "system", "content": brute.SYSTEM_PROMPT}]
-    print("Mini agent ready. Type 'exit' to quit.")
+    print("Mini agent ready. Type 'exit' to quit.\n")
 
     while True:
         user_input = input("You> ")
+        print()
         if user_input.strip().lower() in ("exit", "quit"):
             break
 
         messages.append({"role": "user", "content": user_input})
         response = run_agent(messages)
-        print(f"\nBot> {response}")
+        print(f"\nBot> {response}\n")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import brute.model_client.client as client
+import brute
 
 
 CLIENT = client.create()
@@ -161,7 +162,7 @@ def run_tool(tool_call):
 # Loop over tool calls for one individual prompt.
 def run_agent(messages):
     while True:
-        response = brute.CLIENT.chat.completions.create(
+        response = CLIENT.chat.completions.create(
             model=brute.MODEL,
             messages=messages,
             tools=TOOL_SCHEMAS,

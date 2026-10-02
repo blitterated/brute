@@ -21,5 +21,5 @@ _TOOLS = {
 }
 
 
-def run(name, args):
+def run(name: str, args: dict) -> str:
     return str(_TOOLS[name](**args))

@@ -13,7 +13,7 @@ SCHEMAS = [
 ]
 
 
-TOOLS = {
+_TOOLS = {
     "list_files": model_tools.list_files.list_files,
     "read_file": model_tools.read_file.read_file,
     "write_file": model_tools.write_file.write_file,
@@ -21,12 +21,5 @@ TOOLS = {
 }
 
 
-def run(tool_call):
-    name = tool_call.function.name
-    args = json.loads(tool_call.function.arguments)
-    print(f"  tool: {name}({args}\n")
-
-    try:
-        return str(TOOLS[name](**args))
-    except Exception as ex:
-        return f"Error {ex}"
+def run(name, args):
+    return str(_TOOLS[name](**args))

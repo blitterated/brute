@@ -1,9 +1,21 @@
+import json
 import brute.model_client.client as client
 import brute.model_tools as tools
 import brute
 
 
 CLIENT = client.create()
+
+
+def run_tool(tool_call):
+    name = tool_call.function.name
+    args = json.loads(tool_call.function.arguments)
+    print(f"  tool: {name}({args}\n")
+
+    try:
+        return tools.run(tool_call, args)
+    except Exception as ex:
+        return f"Error {ex}"
 
 
 # Loop over tool calls for one individual prompt.
@@ -22,7 +34,7 @@ def run_agent(messages):
             return response_msg.content
 
         for tool_call in response_msg.tool_calls:
-            result = tools.run(tool_call)
+            result = run_tool(tool_call)
             messages.append({
                 "role": "tool",
                 "tool_call_id": tool_call.id,

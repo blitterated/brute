@@ -1,10 +1,8 @@
 import json
-import brute.model_client.client as client
-import brute.model_tools as tools
 import brute
 
 
-CLIENT = client.create()
+_CLIENT = brute.client.create()
 
 
 def run_tool(tool_call):
@@ -13,7 +11,7 @@ def run_tool(tool_call):
     print(f"  tool: {name}({args}\n")
 
     try:
-        return tools.run(tool_call, args)
+        return brute.tools.run(tool_call, args)
     except Exception as ex:
         return f"Error {ex}"
 
@@ -21,10 +19,10 @@ def run_tool(tool_call):
 # Loop over tool calls for one individual prompt.
 def run_agent(messages):
     while True:
-        response = CLIENT.chat.completions.create(
+        response = _CLIENT.chat.completions.create(
             model=brute.MODEL,
             messages=messages,
-            tools=tools.SCHEMAS,
+            tools=brute.tools.SCHEMAS,
         )
         response_msg = response.choices[0].message
         messages.append(response_msg)

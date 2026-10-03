@@ -1,3 +1,6 @@
+import model_client.client as client
+import model_tools as tools
+
 MODEL = "Qwen3.8-27B-8bit"
 
 SYSTEM_PROMPT = """

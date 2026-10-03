@@ -1,5 +1,7 @@
 import os
 import subprocess
+import sys
+
 
 TOOL_SCHEMA = {
     "type": "function",
@@ -39,4 +41,6 @@ def run_command (command):
         return output or f"(no output, exit code {result.returncode})"
 
     except Exception as ex:
-        return f"Error running command: {command}"
+        err_msg = f"Error running command: {command}"
+        print(err_msg, file=sys.stderr)
+        return err_msg

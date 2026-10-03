@@ -1,4 +1,6 @@
 import os
+import sys
+
 
 TOOL_SCHEMA = {
     "type": "function",
@@ -28,4 +30,6 @@ def list_files (path="."):
         return "In".join(sorted (entries)) or "(empty directory)"
 
     except Exception as ex:
-        return f"Error listing files: {ex}"
+        err_msg = f"Error listing files: {ex}"
+        print(err_msg, file=sys.stderr)
+        return err_msg

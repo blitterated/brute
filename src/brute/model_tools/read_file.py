@@ -1,4 +1,6 @@
 import os
+import sys
+
 
 TOOL_SCHEMA = {
     "type": "function",
@@ -25,4 +27,6 @@ def read_file(path):
             return f.read()
 
     except FileNotFoundError:
-        return f"File {path} not found."
+        err_msg = f"File {path} not found."
+        print(err_msg, file=sys.stderr)
+        return err_msg

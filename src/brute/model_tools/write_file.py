@@ -1,4 +1,6 @@
 import os
+import sys
+
 
 TOOL_SCHEMA = {
     "type": "function",
@@ -31,4 +33,6 @@ def write_file(path, content):
         return f"Saved {path} ({len (content)} characters)"
 
     except Exception as ex:
-        return f"Error writing file {path}: {ex}"
+        err_msg = f"Error writing file {path}: {ex}"
+        print(err_msg, file=sys.stderr)
+        return err_msg

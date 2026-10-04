@@ -1,5 +1,5 @@
 import os
-import sys
+import tool_exception_handler as tex
 
 
 TOOL_SCHEMA = {
@@ -21,12 +21,7 @@ TOOL_SCHEMA = {
 }
 
 
+@tex.tool_exception_handler
 def read_file(path):
-    try:
-        with open (path, "r", encoding="utf-8") as f:
-            return f.read()
-
-    except FileNotFoundError:
-        err_msg = f"File {path} not found."
-        print(err_msg, file=sys.stderr)
-        return err_msg
+    with open (path, "r", encoding="utf-8") as f:
+        return f.read()

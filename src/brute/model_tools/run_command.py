@@ -1,6 +1,6 @@
 import os
 import subprocess
-import sys
+import tool_exception_handler as tex
 
 
 TOOL_SCHEMA = {
@@ -22,25 +22,20 @@ TOOL_SCHEMA = {
 }
 
 
+@tex.tool_exception_handler
 def run_command (command):
-    try:
-        answer = input(f" Run '{command}'? [y/N] ")
+    answer = input(f" Run '{command}'? [y/N] ")
 
-        if answer.strip().lower() != "y":
-            return "The user declined to run this command."
+    if answer.strip().lower() != "y":
+        return "The user declined to run this command."
 
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=121
-        )
+    result = subprocess.run(
+        command,
+        shell=True,
+        capture_output=True,
+        text=True,
+        timeout=121
+    )
 
-        output = (result.stdout + result.stderr).strip()
-        return output or f"(no output, exit code {result.returncode})"
-
-    except Exception as ex:
-        err_msg = f"Error running command: {command}"
-        print(err_msg, file=sys.stderr)
-        return err_msg
+    output = (result.stdout + result.stderr).strip()
+    return output or f"(no output, exit code {result.returncode})"

@@ -1,5 +1,5 @@
 import os
-import sys
+import tool_exception_handler as tex
 
 
 TOOL_SCHEMA = {
@@ -21,15 +21,10 @@ TOOL_SCHEMA = {
 }
 
 
+@tex.tool_exception_handler
 def list_files (path="."):
-    try:
-        entries = []
-        for entry in os.scandir(path):
-            entries. append (entry.name + ("/" if entry.is_dir() else ""))
+    entries = []
+    for entry in os.scandir(path):
+        entries. append (entry.name + ("/" if entry.is_dir() else ""))
 
-        return "In".join(sorted (entries)) or "(empty directory)"
-
-    except Exception as ex:
-        err_msg = f"Error listing files: {ex}"
-        print(err_msg, file=sys.stderr)
-        return err_msg
+    return "In".join(sorted (entries)) or "(empty directory)"

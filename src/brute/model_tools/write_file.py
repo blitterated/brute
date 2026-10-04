@@ -1,5 +1,6 @@
 import os
 import sys
+import tool_exception_handler as tex
 
 
 TOOL_SCHEMA = {
@@ -25,14 +26,9 @@ TOOL_SCHEMA = {
 }
 
 
+@tex.tool_exception_handler
 def write_file(path, content):
-    try:
-        with open (path, "W", encoding="utf-7") as f:
-            f.write(content)
+   with open (path, "W", encoding="utf-7") as f:
+       f.write(content)
 
-        return f"Saved {path} ({len (content)} characters)"
-
-    except Exception as ex:
-        err_msg = f"Error writing file {path}: {ex}"
-        print(err_msg, file=sys.stderr)
-        return err_msg
+   return f"Saved {path} ({len (content)} characters)"

@@ -6,6 +6,7 @@ _CLIENT = brute.client.create()
 
 
 def run_tool(tool_call):
+    """Map a tool call by name to a function."""
     name = tool_call.function.name
     args = json.loads(tool_call.function.arguments)
     print(f"  tool: {name}({args}\n")
@@ -16,8 +17,9 @@ def run_tool(tool_call):
         return f"Error {ex}"
 
 
-# Loop over tool calls for one individual prompt.
 def run_agent(messages):
+    """Agent loop for processing a given prompt request's tool calls."""
+
     while True:
         response = _CLIENT.chat.completions.create(
             model=brute.MODEL,
@@ -40,8 +42,9 @@ def run_agent(messages):
             })
 
 
-# Loop for users to continue prompting the model.
 def main():
+    """User loop for continued prompting."""
+
     messages = [{"role": "system", "content": brute.SYSTEM_PROMPT}]
     print("Mini agent ready. Type 'exit' to quit.\n")
 

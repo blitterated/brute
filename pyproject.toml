@@ -1,7 +1,7 @@
 [project]
 name = "brute"
 version = "0.1.0"
-description = "Rude and mental harness. Not a gent, a brute."
+description = "Rude and mental harness. A brute, not a gent."
 authors = [
     { name = "blitterated", email = "blitterated@proton.me" }
 ]

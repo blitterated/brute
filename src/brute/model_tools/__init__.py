@@ -22,6 +22,3 @@ _TOOLS = {
 
 def run(name: str, args: dict) -> str:
     return str(_TOOLS[name](**args))
-
-
-print("Imported 'model_tools' module")

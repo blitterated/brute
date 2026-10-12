@@ -42,8 +42,6 @@ def run_agent(client, messages):
 def main():
     """User loop for continued prompting."""
 
-    print("main() called"); quit()
-
     client = brute.client.create()
 
     messages = [{"role": "system", "content": brute.SYSTEM_PROMPT}]

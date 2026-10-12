@@ -9,6 +9,3 @@ You can list files, read files, write files, and run shell commands.
 Use your tools to complete the user's task, then briefly summarize what you did.
 The working directory is the folder the user launched you from.
 """
-
-
-print("Imported 'brute' module")

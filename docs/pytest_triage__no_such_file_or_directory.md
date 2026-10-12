@@ -174,3 +174,8 @@ Run `uv pip list` inside your project to see if `pytest` is actually installed. 
 * [fix(devcontainer): a fresh devcontainer cannot run uv run pytest #961](https://github.com/Mai0313/discordbot/issues/961)
 * [Adopt uv for dev workflow: dev dependencies are undeclared and CI is unreproducible locally #8](https://github.com/qso-graph/qrz-mcp/issues/8)
 * [Getting started with Python uv](https://bneijt.nl/blog/getting-started-with-python-uv/)
+
+
+## Other References
+
+* [How to Fix Common pytest Errors with uv](https://pydevtools.com/handbook/how-to/how-to-fix-common-pytest-errors-with-uv/)

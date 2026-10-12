@@ -1,6 +1,7 @@
 import os
 import sys
-import tool_exception_handler as tex
+
+from . import tool_exception_handler as tex
 
 
 TOOL_SCHEMA = {

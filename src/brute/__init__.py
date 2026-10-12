@@ -1,5 +1,5 @@
-import model_client.client as client
-import model_tools as tools
+import brute.model_client as client
+import brute.model_tools as tools
 
 MODEL = "Qwen3.8-27B-8bit"
 
@@ -9,3 +9,6 @@ You can list files, read files, write files, and run shell commands.
 Use your tools to complete the user's task, then briefly summarize what you did.
 The working directory is the folder the user launched you from.
 """
+
+
+print("Imported 'brute' module")

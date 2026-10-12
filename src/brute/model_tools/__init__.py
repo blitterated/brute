@@ -1,7 +1,7 @@
-import model_tools.list_files as list_files
-import model_tools.read_file as read_file
-import model_tools.write_file as write_file
-import model_tools.run_command as run_command
+from . import list_files
+from . import read_file
+from . import write_file
+from . import run_command
 
 
 SCHEMAS = [
@@ -22,3 +22,6 @@ _TOOLS = {
 
 def run(name: str, args: dict) -> str:
     return str(_TOOLS[name](**args))
+
+
+print("Imported 'model_tools' module")

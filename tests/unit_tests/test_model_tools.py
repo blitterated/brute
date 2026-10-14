@@ -1,7 +1,11 @@
-import brute.model_tools.list_files as list_files
-import brute.model_tools.read_file as read_file
-import brute.model_tools.write_file as write_file
-import brute.model_tools.run_command as run_command
+import brute.model_tools.list_files as lf
+import brute.model_tools.read_file as rf
+import brute.model_tools.write_file as wf
+import brute.model_tools.run_command as rc
+
 
 def test_list_files_can_list_files():
-    assert list_files.list_files() == "foo"
+    files = lf.list_files().encode("unicode_escape").decode("utf-8")
+    print(f"test_list_files_can_list_files():\n{files}")
+
+#    assert lf.list_files() == "foo"

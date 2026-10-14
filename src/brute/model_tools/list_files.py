@@ -24,6 +24,9 @@ TOOL_SCHEMA = {
 
 @tex.tool_exception_handler
 def list_files (path="."):
+
+    print(f"list_files(): path = '{path}'") # DEBUG
+
     entries = []
     for entry in os.scandir(path):
         entries. append (entry.name + ("/" if entry.is_dir() else ""))

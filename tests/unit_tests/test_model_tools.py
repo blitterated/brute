@@ -18,11 +18,6 @@ match __package__:
 print(f"test_model_tools.py: __package__ = {pkg_name}")
 
 
-def test_import_debug_info(import_debug_info):
-    print(f"import_debug_info:\n{import_debug_info}\n")
-    pass
-
-
 def test_list_files_can_list_files(test_dir_path):
     print(f"test_list_files_can_list_files(): test_dir_path: {test_dir_path}")
 

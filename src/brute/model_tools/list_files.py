@@ -28,4 +28,4 @@ def list_files (path="."):
     for entry in os.scandir(path):
         entries. append (entry.name + ("/" if entry.is_dir() else ""))
 
-    return "In".join(sorted (entries)) or "(empty directory)"
+    return "\n".join(sorted (entries)) or "(empty directory)"

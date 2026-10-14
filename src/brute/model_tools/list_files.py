@@ -29,6 +29,12 @@ def list_files (path="."):
 
     entries = []
     for entry in os.scandir(path):
-        entries. append (entry.name + ("/" if entry.is_dir() else ""))
+        fmtd_entry = entry.name + ("/" if entry.is_dir() else "")
+        entries.append(fmtd_entry)
+        print(f"list_files entry: {fmtd_entry}") # DEBUG
 
-    return "\n".join(sorted (entries)) or "(empty directory)"
+    dir_list = '\n'.join(sorted(entries)) or "(empty directory)"
+    print(f"list_files(): repr(dir_list)\n{repr(dir_list)}\n") # DEBUG
+    print(f"list_files(): dir_list\n{dir_list}\n") # DEBUG
+
+    return dir_list

@@ -21,3 +21,14 @@ build-backend = "uv_build"
 dev = [
     "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+# Stops suppression of STDOUT.
+addopts = "-s"
+
+# Top level dir of tests.
+# Prevents "ImportError: attempted relative import with no known parent package".
+testpaths = ["tests"]
+
+# Prevents "ModuleNotFoundError: No module named 'foo.bar.baz'".
+pythonpath = ["."]

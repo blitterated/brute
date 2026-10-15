@@ -17,7 +17,7 @@ def setup_list_files_files(a_temp_path: pathlib.Path):
     test_file.write_text("### Three\n\n### Three\n\n### Three", encoding="utf-8")
 
 
-def test_list_files_can_list_files(tmp_path, test_dir_path):
+def test_list_files_can_list_files(tmp_path):
     # Arrange
     setup_list_files_files(tmp_path)
 

@@ -6,6 +6,11 @@ import brute.model_tools.write_file as wf
 import brute.model_tools.run_command as rc
 
 
+def test_import_debug_info(import_debug_info):
+    print(f"import_debug_info:\n{import_debug_info()}\n")
+    pass
+
+
 def setup_list_files_files(a_temp_path: pathlib.Path):
     test_file = a_temp_path / "one.md"
     test_file.write_text("# One", encoding="utf-8")

@@ -15,7 +15,7 @@ def tool_exception_handler(func):
 
         except Exception as ex:
             ex_class_name = type(ex).__name__
-            err_msg = f"Error in {func.__name__}: {ex_class_name}"
+            err_msg = f"Error in brute.model_tools.{func.__name__}(): {ex_class_name}"
             raise ModelToolException(err_msg) from ex
 
     return wrapper

@@ -1,9 +1,7 @@
 import pathlib
+import pytest
 
-import brute.model_tools.list_files as lf
-import brute.model_tools.read_file as rf
-import brute.model_tools.write_file as wf
-import brute.model_tools.run_command as rc
+import brute.model_tools as mtools
 
 
 def setup_list_files_files(a_temp_path: pathlib.Path):
@@ -22,7 +20,17 @@ def test_list_files_can_list_files(tmp_path):
     setup_list_files_files(tmp_path)
 
     # Act
-    files = lf.list_files(tmp_path)
+    files = mtools.list_files(tmp_path)
 
     # Assert
     assert files == 'one.md\nthree.md\ntwo.md'
+
+
+def test_list_files_throws_ex_with_bad_path():
+    # Arrange
+    bad_path = "/i/am/not/a/real/file/path/"
+    expected_msg = "Error in list_files: FileNotFoundError"
+
+    # Act & Assert
+    with pytest.raises(mtools.ModelToolException, match=expected_msg):
+        mtools.list_files(bad_path)

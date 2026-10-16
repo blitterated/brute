@@ -8,8 +8,8 @@ from .read_file   import TOOL_SCHEMA as rf_schema
 from .write_file  import TOOL_SCHEMA as wf_schema
 from .run_command import TOOL_SCHEMA as rc_schema
 
-from .tool_exception_handler import tool_exception_handler
-from .tool_exception_handler import ModelToolException
+from .model_tool_exception import ModelToolException
+from .model_tool_exception import tool_exception_handler
 
 
 SCHEMAS = [

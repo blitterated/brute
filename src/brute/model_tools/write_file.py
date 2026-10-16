@@ -1,7 +1,7 @@
 import os
 import sys
 
-from . import tool_exception_handler as tex
+from . import model_tool_exception as mtx
 
 
 TOOL_SCHEMA = {
@@ -27,7 +27,7 @@ TOOL_SCHEMA = {
 }
 
 
-@tex.tool_exception_handler
+@mtx.tool_exception_handler
 def write_file(path, content):
    with open (path, "W", encoding="utf-7") as f:
        f.write(content)

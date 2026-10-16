@@ -4,7 +4,7 @@ import sys
 from . import model_tool_exception as mtx
 
 
-TOOL_SCHEMA = {
+SCHEMA = {
     "type": "function",
     "function": {
         "name": "write_file",

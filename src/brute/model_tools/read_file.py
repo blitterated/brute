@@ -3,7 +3,7 @@ import os
 from . import model_tool_exception as mtx
 
 
-TOOL_SCHEMA = {
+SCHEMA = {
     "type": "function",
     "function": {
         "name": "read_file",

@@ -3,10 +3,10 @@ from .read_file import read_file
 from .write_file import write_file
 from .run_command import run_command
 
-from .list_files  import TOOL_SCHEMA as lf_schema
-from .read_file   import TOOL_SCHEMA as rf_schema
-from .write_file  import TOOL_SCHEMA as wf_schema
-from .run_command import TOOL_SCHEMA as rc_schema
+from .list_files  import SCHEMA as lf_schema
+from .read_file   import SCHEMA as rf_schema
+from .write_file  import SCHEMA as wf_schema
+from .run_command import SCHEMA as rc_schema
 
 from .model_tool_exception import ModelToolException
 from .model_tool_exception import tool_exception_handler

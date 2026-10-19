@@ -2,6 +2,7 @@ import os
 import subprocess
 
 from .model_tool_exception import tool_exception_handler
+from .model_tool_exception import ModelToolCommandException
 
 
 SCHEMA = {
@@ -38,5 +39,11 @@ def run_command (command):
         timeout=121
     )
 
-    output = (result.stdout + result.stderr).strip()
-    return output or f"(no output, exit code {result.returncode})"
+    return_code = result.returncode
+    output = (result.stdout + result.stderr).strip() or f"(no output, exit code {result.returncode})"
+
+    if return_code > 0:
+        raise ModelToolCommandException(f"run_command() returned a non-zero exit code: {return_code}\n\n{output}")
+
+    print(f"run_command() return code: {return_code})") # DEBUG
+    return output

@@ -96,3 +96,21 @@ def test_run_command_no_output(monkeypatch):
     expected_cmd_no_output = "(no output, exit code 0)"
     found_cmd_output = mtools.run_command(":")
     assert found_cmd_output == expected_cmd_no_output
+
+
+def test_run_command_throws_ex_with_bad_command(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "y")
+    bad_command = "/sark/tron"
+    outer_expected_msg = "Error in brute.model_tools.run_command(): ModelToolCommandException"
+    inner_expected_msg = "run_command() returned a non-zero exit code: 127\n\n/bin/sh: /sark/tron: No such file or directory"
+
+    with pytest.raises(mtools.ModelToolException) as ex_info:
+        mtools.run_command(bad_command)
+
+    outer_ex = ex_info.value
+    inner_ex = ex_info.value.__cause__
+
+    assert outer_expected_msg in str(outer_ex)
+    assert inner_ex is not None
+    assert type(inner_ex) is mtools.ModelToolCommandException
+    assert inner_expected_msg in str(inner_ex)

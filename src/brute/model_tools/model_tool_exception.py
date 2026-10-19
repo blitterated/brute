@@ -4,6 +4,9 @@ import sys
 class ModelToolException(Exception):
     """The model tool specific Exception. Think of it as an envelope for other exceptions."""
 
+class ModelToolCommandException(ModelToolException):
+    """The model tool run command specific Exception."""
+
 
 def tool_exception_handler(func):
     """Decorator handling exception handling for model tool functions,"""

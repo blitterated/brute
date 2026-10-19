@@ -9,6 +9,7 @@ from .write_file  import SCHEMA as wf_schema
 from .run_command import SCHEMA as rc_schema
 
 from .model_tool_exception import ModelToolException
+from .model_tool_exception import ModelToolCommandException
 from .model_tool_exception import tool_exception_handler
 
 

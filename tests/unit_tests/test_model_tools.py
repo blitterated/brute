@@ -5,65 +5,49 @@ import re
 import brute.model_tools as mtools
 
 
-def setup_list_files_files(a_temp_path: pathlib.Path):
-    test_file = a_temp_path / "one.md"
-    test_file.write_text("# One", encoding="utf-8")
+# list_files()
 
-    test_file = a_temp_path / "two.md"
-    test_file.write_text("## Two\n\n## Two", encoding="utf-8")
+@pytest.fixture()
+def expected_file_list(tmp_path: pathlib.Path):
+    """Create three markdown test files, and return a list of filenames."""
+    file_words = ["one", "two", "three"]
+    file_names = []
 
-    test_file = a_temp_path / "three.md"
-    test_file.write_text("### Three\n\n### Three\n\n### Three", encoding="utf-8")
+    for fw in file_words:
+        filename = f"{fw}.md"
+        file_names.append(filename)
+        file_content = f"# Markdown File {fw.capitalize()}"
+        test_file = tmp_path / filename
+        test_file.write_text(file_content, encoding="utf-8")
+
+    return "\n".join(sorted(file_names))
 
 
-def test_list_files_can_list_files(tmp_path):
-    # Arrange
-    setup_list_files_files(tmp_path)
-
-    # Act
-    files = mtools.list_files(tmp_path)
-
-    # Assert
-    assert files == 'one.md\nthree.md\ntwo.md'
+def test_list_files_can_list_files(tmp_path: pathlib.Path, expected_file_list: str):
+    found_file_list = mtools.list_files(str(tmp_path))
+    assert found_file_list == expected_file_list
 
 
 def test_list_files_throws_ex_with_bad_path():
-    # Arrange
     bad_path = "/i/am/not/a/real/file/path/"
     expected_msg = "Error in brute.model_tools.list_files(): FileNotFoundError"
-
-    # Act & Assert
     with pytest.raises(mtools.ModelToolException, match=re.escape(expected_msg)):
         mtools.list_files(bad_path)
 
 
-
-
-
-
-def setup_read_file_file(a_temp_path: pathlib.Path, filename: str, file_content: str):
-    test_file = a_temp_path / filename
-    test_file.write_text(file_content, encoding="utf-8")
-
+# read_file()
 
 def test_read_file_can_read_files(tmp_path):
-    # Arrange
     filename = "monkey.md"
     expected_file_content = "I\nam\na\nhappy\nlittle\nmonkey"
-    setup_read_file_file(tmp_path, filename, expected_file_content)
-
-    # Act
+    test_file = tmp_path / filename
+    test_file.write_text(expected_file_content, encoding="utf-8")
     found_file_content= mtools.read_file(tmp_path / filename)
-
-    # Assert
     assert found_file_content == expected_file_content
 
 
 def test_read_file_throws_ex_with_bad_path():
-    # Arrange
     bad_path = "/i/am/not/a/real/file/path/platypus.md"
     expected_msg = "Error in brute.model_tools.read_file(): FileNotFoundError"
-
-    # Act & Assert
     with pytest.raises(mtools.ModelToolException, match=re.escape(expected_msg)):
         mtools.read_file(bad_path)

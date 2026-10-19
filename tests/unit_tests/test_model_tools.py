@@ -98,6 +98,13 @@ def test_run_command_no_output(monkeypatch):
     assert found_cmd_output == expected_cmd_no_output
 
 
+def test_run_command_user_refuses(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "n") # <== User refuses to run command.
+    expected_cmd_output = "The user declined to run this command."
+    found_cmd_output = mtools.run_command(":")
+    assert found_cmd_output == expected_cmd_output
+
+
 def test_run_command_throws_ex_with_bad_command(monkeypatch):
     monkeypatch.setattr(builtins, 'input', lambda _: "y")
     bad_command = "/sark/tron"

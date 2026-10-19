@@ -23,7 +23,7 @@ def expected_file_list(tmp_path: pathlib.Path):
     return "\n".join(sorted(file_names))
 
 
-def test_list_files(tmp_path: pathlib.Path, expected_file_list: str):
+def test_list_files_can_list_files(tmp_path: pathlib.Path, expected_file_list: str):
     found_file_list = mtools.list_files(str(tmp_path))
     assert found_file_list == expected_file_list
 
@@ -37,7 +37,7 @@ def test_list_files_throws_ex_with_bad_path():
 
 # read_file()
 
-def test_read_file(tmp_path):
+def test_read_file_can_read_files(tmp_path):
     filename = "monkey.md"
     expected_file_content = "I\nam\na\nhappy\nlittle\nmonkey"
     test_file = tmp_path / filename
@@ -55,7 +55,7 @@ def test_read_file_throws_ex_with_bad_path():
 
 # write_file()
 
-def test_write_file(tmp_path):
+def test_write_file_can_write_files(tmp_path):
     filename = "turnip.md"
     expected_file_content = "I\nam\na\nhappy\nlittle\nturnip"
     test_file = tmp_path / filename
@@ -71,6 +71,4 @@ def test_write_file_throws_ex_with_bad_path():
     bad_path = "/i/am/not/a/real/file/path/platypus.md"
     expected_msg = "Error in brute.model_tools.write_file(): AttributeError"
     with pytest.raises(mtools.ModelToolException, match=re.escape(expected_msg)):
-        mtools.write_file(bad_path, "Lorem impsum")          #
-                                                             #
-                                                             #
+        mtools.write_file(bad_path, "Lorem impsum")

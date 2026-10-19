@@ -72,3 +72,23 @@ def test_write_file_throws_ex_with_bad_path():
     expected_msg = "Error in brute.model_tools.write_file(): AttributeError"
     with pytest.raises(mtools.ModelToolException, match=re.escape(expected_msg)):
         mtools.write_file(bad_path, "Lorem impsum")
+
+
+# run_command()
+
+def test_run_command_stdout():
+    expected_cmd_stdout = "testing... 1, 2, 3... testing..."
+    found_cmd_stdout = mtools.run_command(f"echo \"{expected_cmd_stdout}\"")
+    assert found_cmd_stdout == expected_cmd_stdout
+
+
+def test_run_command_stderr():
+    expected_cmd_stderr = "... --- ...   ... --- ..."
+    found_cmd_stderr = mtools.run_command(f"1>&2 echo \"{expected_cmd_stderr}\"")
+    assert found_cmd_stderr == expected_cmd_stderr
+
+
+def test_run_command_no_output():
+    expected_cmd_no_output = "(no output, exit code 0)"
+    found_cmd_output = mtools.run_command(":")
+    assert found_cmd_output == expected_cmd_no_output

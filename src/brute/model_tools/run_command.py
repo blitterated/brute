@@ -45,5 +45,4 @@ def run_command (command):
     if return_code > 0:
         raise ModelToolCommandException(f"run_command() returned a non-zero exit code: {return_code}\n\n{output}")
 
-    print(f"run_command() return code: {return_code})") # DEBUG
     return output

@@ -1,6 +1,6 @@
 import os
 
-from . import model_tool_exception as mtx
+from .model_tool_exception import tool_exception_handler
 
 
 SCHEMA = {
@@ -22,7 +22,7 @@ SCHEMA = {
 }
 
 
-@mtx.tool_exception_handler
+@tool_exception_handler
 def list_files (path="."):
     entries = []
     for entry in os.scandir(path):

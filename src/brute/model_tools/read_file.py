@@ -1,6 +1,6 @@
 import os
 
-from . import model_tool_exception as mtx
+from .model_tool_exception import tool_exception_handler
 
 
 SCHEMA = {
@@ -22,7 +22,7 @@ SCHEMA = {
 }
 
 
-@mtx.tool_exception_handler
+@tool_exception_handler
 def read_file(path):
     with open (path, "r", encoding="utf-8") as f:
         return f.read()

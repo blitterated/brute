@@ -1,3 +1,4 @@
+import builtins
 import pathlib
 import pytest
 import re
@@ -76,19 +77,22 @@ def test_write_file_throws_ex_with_bad_path():
 
 # run_command()
 
-def test_run_command_stdout():
+def test_run_command_stdout(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "y")
     expected_cmd_stdout = "testing... 1, 2, 3... testing..."
     found_cmd_stdout = mtools.run_command(f"echo \"{expected_cmd_stdout}\"")
     assert found_cmd_stdout == expected_cmd_stdout
 
 
-def test_run_command_stderr():
+def test_run_command_stderr(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "y")
     expected_cmd_stderr = "... --- ...   ... --- ..."
     found_cmd_stderr = mtools.run_command(f"1>&2 echo \"{expected_cmd_stderr}\"")
     assert found_cmd_stderr == expected_cmd_stderr
 
 
-def test_run_command_no_output():
+def test_run_command_no_output(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "y")
     expected_cmd_no_output = "(no output, exit code 0)"
     found_cmd_output = mtools.run_command(":")
     assert found_cmd_output == expected_cmd_no_output

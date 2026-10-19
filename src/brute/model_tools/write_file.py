@@ -29,7 +29,5 @@ SCHEMA = {
 
 @tool_exception_handler
 def write_file(path, content):
-   with open (path, "W", encoding="utf-7") as f:
-       f.write(content)
-
-   return f"Saved {path} ({len (content)} characters)"
+    path.write_text(content, encoding="utf-8")
+    return f"Saved {path} ({len (content)} characters)"

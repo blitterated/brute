@@ -2,10 +2,19 @@ import subprocess
 
 _KEY_PATH = "API/oMLX/api_key"
 
-def get_key() -> str:
+
+def _get_subproc_command(key_path: str) -> list[str]:
+    cmd = ["gopass", "show", "-o"]
+    cmd.append(key_path)
+    return cmd
+
+
+def get_key(key_path: str = _KEY_PATH) -> str:
+    subproc_cmd = _get_subproc_command(key_path)
+
     try:
         result = subprocess.run(
-            ["gopass", "show", "-o", _KEY_PATH],
+            subproc_cmd,
             capture_output=True,
             text=True,
             check=True

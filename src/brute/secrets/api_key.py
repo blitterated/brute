@@ -24,5 +24,5 @@ def get_key() -> str:
 
         return api_key
 
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError(f"gopass failed for '{DEFAULT_KEY_PATH}': {e.stderr.strip()}")
+    except subprocess.CalledProcessError as ex:
+        raise RuntimeError(f"gopass failed for '{DEFAULT_KEY_PATH}': {ex.stderr.strip()}") from ex

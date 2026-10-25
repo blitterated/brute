@@ -29,6 +29,14 @@ def test_list_files(tmp_path: pathlib.Path, expected_file_list: str):
     assert found_file_list == expected_file_list
 
 
+def test_run_list_files(tmp_path: pathlib.Path, expected_file_list: str):
+    tool_name = "list_files"
+    tool_args = {"path": str(tmp_path)}
+
+    found_file_list = mtools.run(name=tool_name, args=tool_args)
+    assert found_file_list == expected_file_list
+
+
 def test_list_files_throws_ex_with_bad_path():
     bad_path = "/i/am/not/a/real/file/path/"
     expected_msg = "Error in brute.model_tools.list_files(): FileNotFoundError"

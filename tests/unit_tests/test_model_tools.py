@@ -3,9 +3,39 @@ import pathlib
 import pytest
 import re
 import sys
+
 from dataclasses import dataclass
+from collections.abc import Callable
 
 import brute.model_tools as mtools
+
+
+@dataclass
+class ExpectedFile:
+    path:    str
+    name:    str
+    full_path:     str
+    content: str
+
+
+@pytest.fixture()
+def generate_expected_file(tmp_path: pathlib.Path) -> Callable[[str, bool], ExpectedFile]:
+    """Return a factory function for creating test files for model tools."""
+    def generate(filename: str, create_file: bool = True):
+        """Create metadata for a markdown test file, optionally create the file, and return the metadata in an ExpectedFile."""
+        file_content = f"I\nam\na\nhappy\nlittle\n{filename}"
+        test_file = tmp_path / filename
+        print(f"expected_file() test_file: {str(test_file)}", file=sys.stderr) # DEBUG
+
+        if (create_file):
+            test_file.write_text(file_content, encoding="utf-8")
+
+        return ExpectedFile(path=str(tmp_path),
+                            name=filename,
+                            full_path=str(test_file),
+                            content=file_content)
+
+    return generate
 
 
 # list_files()
@@ -48,35 +78,20 @@ def test_list_files_throws_ex_with_bad_path():
 
 # read_file()
 
-@dataclass
-class ExpectedReadFileFile:
-    path: str
-    content: str
+def test_read_file(generate_expected_file: Callable[[str, bool], ExpectedFile]):
+    expected_file = generate_expected_file(filename="monkey")
+    found_file_content = mtools.read_file(expected_file.full_path)
+    assert found_file_content == expected_file.content
 
 
-@pytest.fixture()
-def expected_read_file_file(tmp_path: pathlib.Path):
-    """Create a markdown test file, and return its file path."""
-    filename = "monkey.md"
-    file_content = "I\nam\na\nhappy\nlittle\nmonkey"
-    test_file = tmp_path / filename
-    print(f"expected_read_file_file() test_file: {str(test_file)}", file=sys.stderr) # DEBUG
-    test_file.write_text(file_content, encoding="utf-8")
+def test_run_read_files(tmp_path: pathlib.Path, generate_expected_file: Callable[[str, bool], ExpectedFile]):
+    expected_file = generate_expected_file(filename="monkey")
 
-    return ExpectedReadFileFile(path=str(test_file), content=file_content)
-
-
-def test_read_file(expected_read_file_file: ExpectedReadFileFile):
-    found_file_content = mtools.read_file(expected_read_file_file.path)
-    assert found_file_content == expected_read_file_file.content
-
-
-def test_run_read_files(tmp_path: pathlib.Path, expected_read_file_file: ExpectedReadFileFile):
     tool_name = "read_file"
-    tool_args = {"path": expected_read_file_file.path}
+    tool_args = {"path": expected_file.full_path}
 
     found_file_content = mtools.run(name=tool_name, args=tool_args)
-    assert found_file_content == expected_read_file_file.content
+    assert found_file_content == expected_file.content
 
 
 def test_read_file_throws_ex_with_bad_path():

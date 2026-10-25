@@ -2,7 +2,6 @@ import builtins
 import pathlib
 import pytest
 import re
-import sys
 
 from dataclasses import dataclass
 from collections.abc import Callable
@@ -21,13 +20,12 @@ class ExpectedFile:
 @pytest.fixture()
 def generate_expected_file(tmp_path: pathlib.Path) -> Callable[[str, bool], ExpectedFile]:
     """Return a factory function for creating test files for model tools."""
-    def generate(filename: str, create_file: bool = True):
+    def generate(filename: str, create: bool = True):
         """Create metadata for a markdown test file, optionally create the file, and return the metadata in an ExpectedFile."""
         file_content = f"I\nam\na\nhappy\nlittle\n{filename}"
         test_file = tmp_path / filename
-        print(f"expected_file() test_file: {str(test_file)}", file=sys.stderr) # DEBUG
 
-        if (create_file):
+        if (create):
             test_file.write_text(file_content, encoding="utf-8")
 
         return ExpectedFile(path=str(tmp_path),
@@ -103,21 +101,41 @@ def test_read_file_throws_ex_with_bad_path():
 
 # write_file()
 
-def test_write_file(tmp_path):
-    filename = "turnip.md"
-    expected_file_content = "I\nam\na\nhappy\nlittle\nturnip"
-    test_file = tmp_path / filename
 
-    mtools.write_file(test_file, expected_file_content)
+def test_write_file(generate_expected_file: ExpectedFile):
+    expected_file = generate_expected_file(filename="turnip", create=False)
+    expected_response = f"Saved {expected_file.full_path} ({len (expected_file.content)} characters)"
 
+    found_response = mtools.write_file(expected_file.full_path, expected_file.content)
     # read_file() is basic enough that we can use it here instead of copying its code.
-    found_file_content = mtools.read_file(test_file)
-    assert found_file_content == expected_file_content
+    found_file_content = mtools.read_file(expected_file.full_path)
+
+    assert found_response == expected_response
+    assert found_file_content == expected_file.content
+
+
+def test_run_write_file(generate_expected_file: ExpectedFile):
+    expected_file = generate_expected_file(filename="turnip", create=False)
+    expected_response = f"Saved {expected_file.full_path} ({len (expected_file.content)} characters)"
+
+    tool_name = "write_file"
+    tool_args = {
+        "path": expected_file.full_path,
+        "content": expected_file.content,
+    }
+
+    found_response = mtools.run(name=tool_name, args=tool_args)
+    # read_file() is basic enough that we can use it here instead of copying its code.
+    found_file_content = mtools.read_file(expected_file.full_path)
+
+    assert found_response == expected_response
+    assert found_file_content == expected_file.content
 
 
 def test_write_file_throws_ex_with_bad_path():
     bad_path = "/i/am/not/a/real/file/path/platypus.md"
-    expected_msg = "Error in brute.model_tools.write_file(): AttributeError"
+    #expected_msg = "Error in brute.model_tools.write_file(): AttributeError"
+    expected_msg = "Error in brute.model_tools.write_file(): FileNotFoundError"
     with pytest.raises(mtools.ModelToolException, match=re.escape(expected_msg)):
         mtools.write_file(bad_path, "Lorem impsum")
 

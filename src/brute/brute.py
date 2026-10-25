@@ -2,6 +2,9 @@ import json
 import brute
 
 
+TOOL_SCHEMAS = brute.tools.SCHEMAS
+
+
 def run_tool(tool_call):
     """Map a tool call by name to a function."""
     name = tool_call.function.name
@@ -21,7 +24,7 @@ def run_agent(client, messages):
         response = client.chat.completions.create(
             model=brute.MODEL,
             messages=messages,
-            tools=brute.tools.SCHEMAS,
+            tools=TOOL_SCHEMAS,
         )
         response_msg = response.choices[0].message
         messages.append(response_msg)

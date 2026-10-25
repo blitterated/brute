@@ -82,7 +82,7 @@ def test_read_file(generate_expected_file: Callable[[str, bool], ExpectedFile]):
     assert found_file_content == expected_file.content
 
 
-def test_run_read_files(tmp_path: pathlib.Path, generate_expected_file: Callable[[str, bool], ExpectedFile]):
+def test_run_read_files(generate_expected_file: Callable[[str, bool], ExpectedFile]):
     expected_file = generate_expected_file(filename="monkey")
 
     tool_name = "read_file"

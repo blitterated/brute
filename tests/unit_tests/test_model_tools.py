@@ -2,6 +2,8 @@ import builtins
 import pathlib
 import pytest
 import re
+import sys
+from dataclasses import dataclass
 
 import brute.model_tools as mtools
 
@@ -46,13 +48,35 @@ def test_list_files_throws_ex_with_bad_path():
 
 # read_file()
 
-def test_read_file(tmp_path):
+@dataclass
+class ExpectedReadFileFile:
+    path: str
+    content: str
+
+
+@pytest.fixture()
+def expected_read_file_file(tmp_path: pathlib.Path):
+    """Create a markdown test file, and return its file path."""
     filename = "monkey.md"
-    expected_file_content = "I\nam\na\nhappy\nlittle\nmonkey"
+    file_content = "I\nam\na\nhappy\nlittle\nmonkey"
     test_file = tmp_path / filename
-    test_file.write_text(expected_file_content, encoding="utf-8")
-    found_file_content = mtools.read_file(tmp_path / filename)
-    assert found_file_content == expected_file_content
+    print(f"expected_read_file_file() test_file: {str(test_file)}", file=sys.stderr) # DEBUG
+    test_file.write_text(file_content, encoding="utf-8")
+
+    return ExpectedReadFileFile(path=str(test_file), content=file_content)
+
+
+def test_read_file(expected_read_file_file: ExpectedReadFileFile):
+    found_file_content = mtools.read_file(expected_read_file_file.path)
+    assert found_file_content == expected_read_file_file.content
+
+
+def test_run_read_files(tmp_path: pathlib.Path, expected_read_file_file: ExpectedReadFileFile):
+    tool_name = "read_file"
+    tool_args = {"path": expected_read_file_file.path}
+
+    found_file_content = mtools.run(name=tool_name, args=tool_args)
+    assert found_file_content == expected_read_file_file.content
 
 
 def test_read_file_throws_ex_with_bad_path():

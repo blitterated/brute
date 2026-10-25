@@ -9,12 +9,12 @@ def run_tool(tool_call):
     """Map a tool call by name to a function."""
     name = tool_call.function.name
     args = json.loads(tool_call.function.arguments)
-    print(f"  tool: {name}({args}\n")
+    print(f"Tool Call Request:\n{name}({args}\n") # DEBUG
 
     try:
         return brute.tools.run(tool_call, args)
     except Exception as ex:
-        return f"Error {ex}"
+        return f"Error running tool call:\n{ex}"
 
 
 def run_agent(client, messages):
@@ -35,6 +35,7 @@ def run_agent(client, messages):
 
         for tool_call in response_msg.tool_calls:
             result = run_tool(tool_call)
+            print(f"Tool Call Result:\n{result}\n") # DEBUG
             messages.append({
                 "role": "tool",
                 "tool_call_id": tool_call.id,

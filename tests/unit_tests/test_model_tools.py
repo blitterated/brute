@@ -176,6 +176,16 @@ def test_run_command_user_refuses(user_always_says_no):
     assert found_cmd_output == expected_cmd_output
 
 
+def test_run_run_command(user_always_says_yes):
+    expected_cmd_stdout = "testing... 1, 2, 3... testing..."
+
+    tool_name = "run_command"
+    tool_args = {"command": f"echo \"{expected_cmd_stdout}\""}
+
+    found_cmd_stdout = mtools.run(name=tool_name, args=tool_args)
+    assert found_cmd_stdout == expected_cmd_stdout
+
+
 def test_run_command_throws_ex_with_bad_command(user_always_says_yes):
     bad_command = "/sark/tron"
     outer_expected_msg = "Error in brute.model_tools.run_command(): ModelToolCommandException"

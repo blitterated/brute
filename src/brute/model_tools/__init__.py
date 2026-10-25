@@ -31,3 +31,7 @@ _TOOLS = {
 
 def run(name: str, args: dict) -> str:
     return str(_TOOLS[name](**args))
+
+
+def is_local(name: str) -> bool:
+    return True if name in _TOOLS else False

@@ -142,36 +142,41 @@ def test_write_file_throws_ex_with_bad_path():
 
 # run_command()
 
-def test_run_command_stdout(monkeypatch):
+@pytest.fixture()
+def user_always_says_yes(monkeypatch):
     monkeypatch.setattr(builtins, 'input', lambda _: "y")
+
+
+@pytest.fixture()
+def user_always_says_no(monkeypatch):
+    monkeypatch.setattr(builtins, 'input', lambda _: "n")
+
+
+def test_run_command_stdout(user_always_says_yes):
     expected_cmd_stdout = "testing... 1, 2, 3... testing..."
     found_cmd_stdout = mtools.run_command(f"echo \"{expected_cmd_stdout}\"")
     assert found_cmd_stdout == expected_cmd_stdout
 
 
-def test_run_command_stderr(monkeypatch):
-    monkeypatch.setattr(builtins, 'input', lambda _: "y")
+def test_run_command_stderr(user_always_says_yes):
     expected_cmd_stderr = "... --- ...   ... --- ..."
     found_cmd_stderr = mtools.run_command(f"1>&2 echo \"{expected_cmd_stderr}\"")
     assert found_cmd_stderr == expected_cmd_stderr
 
 
-def test_run_command_no_output(monkeypatch):
-    monkeypatch.setattr(builtins, 'input', lambda _: "y")
+def test_run_command_no_output(user_always_says_yes):
     expected_cmd_no_output = "(no output, exit code 0)"
     found_cmd_output = mtools.run_command(":")
     assert found_cmd_output == expected_cmd_no_output
 
 
-def test_run_command_user_refuses(monkeypatch):
-    monkeypatch.setattr(builtins, 'input', lambda _: "n") # <== User refuses to run command.
+def test_run_command_user_refuses(user_always_says_no):
     expected_cmd_output = "The user declined to run this command."
     found_cmd_output = mtools.run_command(":")
     assert found_cmd_output == expected_cmd_output
 
 
-def test_run_command_throws_ex_with_bad_command(monkeypatch):
-    monkeypatch.setattr(builtins, 'input', lambda _: "y")
+def test_run_command_throws_ex_with_bad_command(user_always_says_yes):
     bad_command = "/sark/tron"
     outer_expected_msg = "Error in brute.model_tools.run_command(): ModelToolCommandException"
     inner_expected_msg = "run_command() returned a non-zero exit code: 127\n\n/bin/sh: /sark/tron: No such file or directory"

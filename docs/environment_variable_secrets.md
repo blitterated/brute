@@ -10,6 +10,7 @@ Run this in the project directory or source it from an rc file.
 alias uvrun="uv run --env-file .env "
 ```
 
+
 ### Set and export UV_ENV_FILE
 
 Run this in the project directory or source it from an rc file.
@@ -24,9 +25,9 @@ export UV_ENV_FILE='.env'
 ### `.env`
 
 ```text
-OMLX_API_KEY=omlx-zyn2t8os5p3m5ewg
 OMLX_API_KEY=omlx-g0F1nDy0uR0wnK3y
 ```
+
 
 ### `read_env.py`
 
@@ -80,7 +81,7 @@ uv run --env-file .env read_env.py
 ```
 
 ```text
-api_key ='omlx-zyn2t8os5p3m5ewg'
+api_key ='omlx-g0F1nDy0uR0wnK3y'
 ```
 
 I get denied again by removing the `--env-file` option.
@@ -116,8 +117,9 @@ uv run read_env.py
 ```
 
 ```text
-api_key ='omlx-zyn2t8os5p3m5ewg'
+api_key ='omlx-g0F1nDy0uR0wnK3y'
 ```
+
 
 ## References
 

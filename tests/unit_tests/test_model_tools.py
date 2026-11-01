@@ -2,13 +2,16 @@ import builtins
 import pytest
 import re
 
+from collections.abc import Callable
+from pathlib import Path
+
 import brute.model_tools as mtools
 
 
 # list_files()
 
 @pytest.fixture()
-def expected_file_list(tmp_path: pathlib.Path):
+def expected_file_list(tmp_path: Path):
     """Create three markdown test files, and return a list of filenames."""
     file_words = ["one", "two", "three"]
     file_names = []
@@ -23,12 +26,12 @@ def expected_file_list(tmp_path: pathlib.Path):
     return "\n".join(sorted(file_names))
 
 
-def test_list_files(tmp_path: pathlib.Path, expected_file_list: str):
+def test_list_files(tmp_path: Path, expected_file_list: str):
     found_file_list = mtools.list_files(str(tmp_path))
     assert found_file_list == expected_file_list
 
 
-def test_run_list_files(tmp_path: pathlib.Path, expected_file_list: str):
+def test_run_list_files(tmp_path: Path, expected_file_list: str):
     tool_name = "list_files"
     tool_args = {"path": str(tmp_path)}
 

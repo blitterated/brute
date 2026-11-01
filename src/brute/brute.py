@@ -139,7 +139,7 @@ async def launch_user_loop() -> None:
         client = brute.client.create_async()
         messages = [{"role": "system", "content": brute.SYSTEM_PROMPT}]
 
-        print("Mini agent ready. Type 'exit' to quit.\n")
+        print("I am brute! Quit with 'exit', 'quit', or Ctrl-c.\n")
 
         try:
             await run_user_loop(client, messages)

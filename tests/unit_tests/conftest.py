@@ -1,6 +1,8 @@
 import pytest
 
+from collections.abc import Callable
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -12,7 +14,7 @@ class ExpectedFile:
 
 
 @pytest.fixture()
-def generate_expected_file(tmp_path: pathlib.Path) -> Callable[[str, bool], ExpectedFile]:
+def generate_expected_file(tmp_path: Path) -> Callable[[str, bool], ExpectedFile]:
     """Return a factory function for creating test files for model tools."""
     def generate(filename: str, create: bool = True):
         """Create metadata for a markdown test file, optionally create the file, and return the metadata in an ExpectedFile."""

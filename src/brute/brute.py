@@ -1,5 +1,7 @@
 import json
 
+from openai import AsyncOpenAI
+
 # Imports for MCP
 import asyncio
 from contextlib import AsyncExitStack
@@ -20,7 +22,7 @@ _tool_schemas = brute.tools.SCHEMAS.copy()
 _mcp_sessions: dict[str, ClientSession] = {}
 
 
-async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path):
+async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
     """Read in mcpServers.json config, merge in its tool schemas, and launch each MCP server."""
     config = json.loads(MCP_CONFIG.read_text(encoding="utf-8"))
 
@@ -49,13 +51,10 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path):
         print(f"MCP connected '{name}': {[t.name for t in tools]}") # DEBUG
 
 
-async def call_tool(tool_call) -> str:
+async def call_tool(tool_name: str, tool_args: dict) -> str:
     """Map a tool call by name to a function or mcp client and call it."""
-    tool_name = tool_call.function.name
-    tool_args = json.loads(tool_call.function.arguments)
 
-    print(f"call_tool(): tool_call type: {type(tool_call)}\n") # DEBUG
-    print(f"call_tool(): Tool Call Request:\n{tool_name}({tool_args}\n") # DEBUG
+    print(f"Tool Call Request:\n{tool_name}({tool_args}\n") # DEBUG
 
     # Try local tools first.
     if brute.tools.is_local(tool_name):
@@ -69,7 +68,7 @@ async def call_tool(tool_call) -> str:
         return f"Error running tool call:\n{ex}"
 
 
-async def run_agent_loop(client, messages):
+async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:
     """
     Agentic loop for processing a given prompt request's tool calls.
 
@@ -90,9 +89,15 @@ async def run_agent_loop(client, messages):
         if not response_msg.tool_calls:
             return response_msg.content
 
+        # tool_call: openai.types.chat.chat_completion_message_function_tool_call.ChatCompletionMessageFunctionToolCall
         for tool_call in response_msg.tool_calls:
-            result = await call_tool(tool_call)
+            tool_name = tool_call.function.name
+            tool_args = json.loads(tool_call.function.arguments)
+
+            result = await call_tool(tool_name, tool_args)
+
             print(f"Tool Call Result:\n{result}\n") # DEBUG
+
             messages.append({
                 "role": "tool",
                 "tool_call_id": tool_call.id,
@@ -100,7 +105,7 @@ async def run_agent_loop(client, messages):
             })
 
 
-async def run_user_loop(client, messages):
+async def run_user_loop(client: AsyncOpenAI, messages: list) -> None:
     """
     Continuous loop for handling successive user inputs.
 
@@ -116,7 +121,7 @@ async def run_user_loop(client, messages):
         print(f"\nBot> {response}\n")
 
 
-async def launch_user_loop():
+async def launch_user_loop() -> None:
     """
     Initialize and enter the user loop.
 
@@ -138,7 +143,7 @@ async def launch_user_loop():
             print("\nEND OF LINE")
 
 
-def main():
+def main() -> None:
     # Entrypoint into async
     asyncio.run(launch_user_loop())
 

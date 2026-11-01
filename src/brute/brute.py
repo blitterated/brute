@@ -69,8 +69,13 @@ async def call_tool(tool_call) -> str:
         return f"Error running tool call:\n{ex}"
 
 
-async def run_agent(client, messages):
-    """Agent loop for processing a given prompt request's tool calls."""
+async def run_agent_loop(client, messages):
+    """
+    Agentic loop for processing a given prompt request's tool calls.
+
+    Loops over tool calls and processes them.
+    Returns final result from model.
+    """
 
     while True:
         response = await client.chat.completions.create(
@@ -96,16 +101,29 @@ async def run_agent(client, messages):
 
 
 async def run_user_loop(client, messages):
-   """Continuous loop for handling successive user inputs."""
-   while True:
-       question = await asyncio.to_thread(input, "\nYou: ")
-       messages.append({"role": "user", "content": question})
-       response = await run_agent(client, messages)
-       print(f"\nBot> {response}\n")
+    """
+    Continuous loop for handling successive user inputs.
+
+    Captures prompting from user.
+    Appends prompt to message history.
+    Sends above into agent loop.
+    Shows the result.
+    """
+    while True:
+        question = await asyncio.to_thread(input, "\nYou: ")
+        messages.append({"role": "user", "content": question})
+        response = await run_agent_loop(client, messages)
+        print(f"\nBot> {response}\n")
 
 
 async def launch_user_loop():
-    """User loop for continued prompting."""
+    """
+    Initialize and enter the user loop.
+
+    Creates a client.
+    Creates the messages array and initializes with system prompt.
+    Enters the user prompt loop.
+    """
     async with AsyncExitStack() as stack:
         await connect_mcp(stack, MCP_CONFIG)
 
@@ -120,8 +138,8 @@ async def launch_user_loop():
             print("\nEND OF LINE")
 
 
-# Entrypoint into async
 def main():
+    # Entrypoint into async
     asyncio.run(launch_user_loop())
 
 

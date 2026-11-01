@@ -49,26 +49,22 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path):
         print(f"MCP connected '{name}': {[t.name for t in tools]}") # DEBUG
 
 
-async def call_tool(name: str, args: dict) -> str:
-    """Run a tool, either ours directly, or an MCP server's over the protocol."""
-
-    # Try local tools, our functions defined above, first.
-    if brute.tools.is_local(name):
-        return brute.tools.run(name, args)
-
-    # Otherwise, run an MCP request.
-    result = await _mcp_sessions[name].call_tool(name, args)
-    return "\n".join(c.text for c in result.content if hasattr(c, "text"))
-
-
-async def run_tool(tool_call):
-    """Map a tool call by name to a function or mcp client."""
+async def call_tool(tool_call) -> str:
+    """Map a tool call by name to a function or mcp client and call it."""
     tool_name = tool_call.function.name
     tool_args = json.loads(tool_call.function.arguments)
-    print(f"Tool Call Request:\n{tool_name}({tool_args}\n") # DEBUG
 
+    print(f"call_tool(): tool_call type: {type(tool_call)}\n") # DEBUG
+    print(f"call_tool(): Tool Call Request:\n{tool_name}({tool_args}\n") # DEBUG
+
+    # Try local tools first.
+    if brute.tools.is_local(tool_name):
+        return brute.tools.run(tool_name, tool_args)
+
+    # Otherwise, run an MCP request.
     try:
-        return await call_tool(tool_name, tool_args)
+        result = await _mcp_sessions[tool_name].call_tool(tool_name, tool_args)
+        return "\n".join(c.text for c in result.content if hasattr(c, "text"))
     except Exception as ex:
         return f"Error running tool call:\n{ex}"
 
@@ -90,7 +86,7 @@ async def run_agent(client, messages):
             return response_msg.content
 
         for tool_call in response_msg.tool_calls:
-            result = await run_tool(tool_call)
+            result = await call_tool(tool_call)
             print(f"Tool Call Result:\n{result}\n") # DEBUG
             messages.append({
                 "role": "tool",

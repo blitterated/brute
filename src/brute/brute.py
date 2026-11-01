@@ -99,7 +99,16 @@ async def run_agent(client, messages):
             })
 
 
-async def user_loop():
+async def run_user_loop(client, messages):
+   """Continuous loop for handling successive user inputs."""
+   while True:
+       question = await asyncio.to_thread(input, "\nYou: ")
+       messages.append({"role": "user", "content": question})
+       response = await run_agent(client, messages)
+       print(f"\nBot> {response}\n")
+
+
+async def launch_user_loop():
     """User loop for continued prompting."""
     async with AsyncExitStack() as stack:
         await connect_mcp(stack)
@@ -110,20 +119,14 @@ async def user_loop():
         print("Mini agent ready. Type 'exit' to quit.\n")
 
         try:
-            # User prompt loop to continue prompting the model.
-            while True:
-                question = await asyncio.to_thread(input, "\nYou: ")
-                messages.append({"role": "user", "content": question})
-                response = await run_agent(client, messages)
-                print(f"\nBot> {response}\n")
-
+            await run_user_loop(client, messages)
         except(EOFError, KeyboardInterrupt):
             print("\nEND OF LINE")
 
 
 # Entrypoint into async
 def main():
-    asyncio.run(user_loop())
+    asyncio.run(launch_user_loop())
 
 
 if __name__ == "__main__":

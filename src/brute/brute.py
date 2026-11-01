@@ -20,7 +20,7 @@ _tool_schemas = brute.tools.SCHEMAS.copy()
 _mcp_sessions: dict[str, ClientSession] = {}
 
 
-async def connect_mcp(stack: AsyncExitStack):
+async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path):
     """Read in mcpServers.json config, merge in its tool schemas, and launch each MCP server."""
     config = json.loads(MCP_CONFIG.read_text(encoding="utf-8"))
 
@@ -111,11 +111,11 @@ async def run_user_loop(client, messages):
 async def launch_user_loop():
     """User loop for continued prompting."""
     async with AsyncExitStack() as stack:
-        await connect_mcp(stack)
+        await connect_mcp(stack, MCP_CONFIG)
 
         client = brute.client.create_async()
-
         messages = [{"role": "system", "content": brute.SYSTEM_PROMPT}]
+
         print("Mini agent ready. Type 'exit' to quit.\n")
 
         try:

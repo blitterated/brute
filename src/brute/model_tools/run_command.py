@@ -26,7 +26,7 @@ SCHEMA = {
 
 @tool_exception_handler
 def run_command (command):
-    answer = input(f" Run '{command}'? [y/N] ")
+    answer = input(f"Run '{command}'? [y/N] ")
 
     if answer.strip().lower() != "y":
         return "The user declined to run this command."

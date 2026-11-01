@@ -115,8 +115,12 @@ async def run_user_loop(client: AsyncOpenAI, messages: list) -> None:
     Shows the result.
     """
     while True:
-        question = await asyncio.to_thread(input, "\nYou: ")
-        messages.append({"role": "user", "content": question})
+        user_input = await asyncio.to_thread(input, "\nYou: ")
+
+        if user_input.strip().lower() in ("exit", "quit"):
+            break
+
+        messages.append({"role": "user", "content": user_input})
         response = await run_agent_loop(client, messages)
         print(f"\nBot> {response}\n")
 

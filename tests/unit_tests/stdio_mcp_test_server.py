@@ -1,6 +1,9 @@
 import json
 import sys
 
+_ENABLE_LOGGING = True
+#_ENABLE_LOGGING = False
+
 
 RESPONSE_TO_INITIALIZE_CALL = {
     "protocolVersion": "2024-11-05",
@@ -26,25 +29,25 @@ RESPONSE_TO_INITIALIZE_CALL = {
 
 REVERSE_TOOL_SCHEMA = {
     "name": "reverse",
-    "description": "Reverse a string.\n\nArgs:\n    a_string\n",
+    "description": "Reverse a string.\n\nArgs:\n    aString\n",
     "inputSchema": {
         "type": "object",
         "properties": {
-            "a_string": {
-                "title": "a_string",
+            "aString": {
+                "title": "aString",
                 "type": "string",
                 "description": "The target string to reverse.",
             },
         },
-        "required": ["a_string"],
+        "required": ["aString"],
     },
 }
 
 
 def log(msg: str) -> None:
-#    sys.stderr.write(f"[mcp-server] {msg}\n")
-#    sys.stderr.flush()
-    pass
+    if _ENABLE_LOGGING:
+        sys.stderr.write(f"[mcp-server] {msg}\n")
+        sys.stderr.flush()
 
 
 def emit(payload: dict) -> None:
@@ -92,18 +95,18 @@ def main() -> None:
             emit_mcp_error(message="Parse error", code=-32700)
             continue
 
-        log("STDIO_TEST_MCP: Converted to JSON") # DEBUG
+#        log("STDIO_TEST_MCP: Converted to JSON") # DEBUG
 
         if not isinstance(request, dict):
             emit_mcp_error(message="Invalid Request", code=-32600)
             continue
 
-        log("STDIO_TEST_MCP: Validated dict type") # DEBUG
+#        log("STDIO_TEST_MCP: Validated dict type") # DEBUG
 
         method = request.get("method")
-        log(f"STDIO_TEST_MCP: {method =}") # DEBUG
+#        log(f"STDIO_TEST_MCP: {method =}") # DEBUG
         request_id = request.get("id")
-        log(f"STDIO_TEST_MCP: {request_id =}") # DEBUG
+#        log(f"STDIO_TEST_MCP: {request_id =}") # DEBUG
 
         if method == "initialize":
             #emit_result(request_id, RESPONSE_TO_INITIALIZE_CALL)
@@ -130,7 +133,7 @@ def main() -> None:
                 },
             }
 
-            log(f"STDIO_TEST_MCP: toolsListResponse:\n{json.dumps(toolsListResponse, indent=2)}") # DEBUG
+#            log(f"STDIO_TEST_MCP: toolsListResponse:\n{json.dumps(toolsListResponse, indent=2)}") # DEBUG
 
             # pydantic_core._pydantic_core.ValidationError: 1 validation error for ListToolsResult
             # tools.0.inputSchema.type
@@ -164,16 +167,20 @@ def main() -> None:
             params = request.get("params", {})
             if not isinstance(params, dict):
                 params = {}
+            log(f"STDIO_TEST_MCP: params:\n{json.dumps(params, indent=2)}") # DEBUG
 
-            _tool_name = params.get("name")
+            tool_name = params.get("name") # Is this even used?
+            log(f"STDIO_TEST_MCP: tool_name:\n{tool_name}") # DEBUG
 
             arguments = params.get("arguments", {})
             if not isinstance(arguments, dict):
                 arguments = {}
+            log(f"STDIO_TEST_MCP: arguments:\n{json.dumps(arguments, indent=2)}") # DEBUG
 
-            a_string = arguments.get("num1")
+            aString = arguments.get("aString")
+            log(f"STDIO_TEST_MCP: {aString =}") # DEBUG
 
-            if a_string == "" or a_string is None:
+            if aString == "" or aString is None:
                 emit(
                     {
                         "jsonrpc": "2.0",
@@ -182,7 +189,7 @@ def main() -> None:
                             "content": [
                                 {
                                     "type": "text",
-                                    "text": "Missing or invalid argument: a_string must not be None or empty.",
+                                    "text": "Missing or invalid argument: aString must not be None or empty.",
                                 }
                             ],
                             "isError": True,
@@ -191,7 +198,8 @@ def main() -> None:
                 )
                 continue
 
-            reversed_string = a_string[::-1]
+            reversedString = aString[::-1]
+            log(f"STDIO_TEST_MCP: {reversedString =}") # DEBUG
 
             emit(
                 {
@@ -201,7 +209,7 @@ def main() -> None:
                         "content": [
                             {
                                 "type": "text",
-                                "text": f"\n sum of two numbers is {reversed_string}",
+                                "text": f"\n{reversedString}",
                             }
                         ],
                         "isError": False,

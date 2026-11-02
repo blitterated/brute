@@ -1,8 +1,7 @@
 import json
 import sys
 
-_ENABLE_LOGGING = True
-#_ENABLE_LOGGING = False
+_ENABLE_LOGGING = False
 
 
 RESPONSE_TO_INITIALIZE_CALL = {
@@ -95,18 +94,15 @@ def main() -> None:
             emit_mcp_error(message="Parse error", code=-32700)
             continue
 
-#        log("STDIO_TEST_MCP: Converted to JSON") # DEBUG
-
         if not isinstance(request, dict):
             emit_mcp_error(message="Invalid Request", code=-32600)
             continue
 
-#        log("STDIO_TEST_MCP: Validated dict type") # DEBUG
-
         method = request.get("method")
-#        log(f"STDIO_TEST_MCP: {method =}") # DEBUG
+        log(f"STDIO_TEST_MCP: {method =}") # DEBUG
+
         request_id = request.get("id")
-#        log(f"STDIO_TEST_MCP: {request_id =}") # DEBUG
+        log(f"STDIO_TEST_MCP: {request_id =}") # DEBUG
 
         if method == "initialize":
             #emit_result(request_id, RESPONSE_TO_INITIALIZE_CALL)
@@ -133,7 +129,7 @@ def main() -> None:
                 },
             }
 
-#            log(f"STDIO_TEST_MCP: toolsListResponse:\n{json.dumps(toolsListResponse, indent=2)}") # DEBUG
+            log(f"STDIO_TEST_MCP: toolsListResponse:\n{json.dumps(toolsListResponse, indent=2)}") # DEBUG
 
             # pydantic_core._pydantic_core.ValidationError: 1 validation error for ListToolsResult
             # tools.0.inputSchema.type
@@ -167,18 +163,12 @@ def main() -> None:
             params = request.get("params", {})
             if not isinstance(params, dict):
                 params = {}
-            log(f"STDIO_TEST_MCP: params:\n{json.dumps(params, indent=2)}") # DEBUG
-
-            tool_name = params.get("name") # Is this even used?
-            log(f"STDIO_TEST_MCP: tool_name:\n{tool_name}") # DEBUG
 
             arguments = params.get("arguments", {})
             if not isinstance(arguments, dict):
                 arguments = {}
-            log(f"STDIO_TEST_MCP: arguments:\n{json.dumps(arguments, indent=2)}") # DEBUG
 
             aString = arguments.get("aString")
-            log(f"STDIO_TEST_MCP: {aString =}") # DEBUG
 
             if aString == "" or aString is None:
                 emit(
@@ -199,7 +189,6 @@ def main() -> None:
                 continue
 
             reversedString = aString[::-1]
-            log(f"STDIO_TEST_MCP: {reversedString =}") # DEBUG
 
             emit(
                 {
@@ -219,8 +208,6 @@ def main() -> None:
 
         else:
             emit_mcp_error(message="Method not found", code=-32601)
-
-        log("STDIO_TEST_MCP: Exiting main()") # DEBUG
 
 
 if __name__ == "__main__":

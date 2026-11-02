@@ -24,7 +24,15 @@ _mcp_sessions: dict[str, ClientSession] = {}
 
 async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
     """Read in mcpServers.json config, merge in its tool schemas, and launch each MCP server."""
-    config = json.loads(MCP_CONFIG.read_text(encoding="utf-8"))
+    print(f"connect_mcp(): path:    {str(mcpConfigPath)}") # DEBUG
+    with open(str(mcpConfigPath), 'r') as fart: # DEBUG
+        print(f"connect_mcp(): content: {fart.read()}") # DEBUG
+
+    config = json.loads(mcpConfigPath.read_text(encoding="utf-8"))
+    print(f"connect_mcp(): config:  {config}") # DEBUG
+
+    if len(config["mcpServers"]) < 1:
+        print("WARNING: mcpServers.json is empty.")
 
     for name, spec in config["mcpServers"].items():
         params = StdioServerParameters(command=spec["command"], args=spec["args"])
@@ -54,7 +62,7 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
 async def call_tool(tool_name: str, tool_args: dict) -> str:
     """Map a tool call by name to a function or mcp client and call it."""
 
-    print(f"Tool Call Request:\n{tool_name}({tool_args}\n") # DEBUG
+    print(f"Tool Call Request:\n\t{tool_name}({tool_args}\n") # DEBUG
 
     # Try local tools first.
     if brute.tools.is_local(tool_name):
@@ -65,7 +73,9 @@ async def call_tool(tool_name: str, tool_args: dict) -> str:
         result = await _mcp_sessions[tool_name].call_tool(tool_name, tool_args)
         return "\n".join(c.text for c in result.content if hasattr(c, "text"))
     except Exception as ex:
-        return f"Error running tool call:\n{ex}"
+        #err_msg = f"Error running tool call:\n{type(ex).__name__}: {ex}"
+        #return err_msg
+        return f"Error running tool call:\n{type(ex).__name__}: {ex}"
 
 
 async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:

@@ -40,6 +40,12 @@ REVERSE_TOOL_SCHEMA = {
 }
 
 
+def log(msg: str) -> None:
+#    sys.stderr.write(f"[mcp-server] {msg}\n")
+#    sys.stderr.flush()
+    pass
+
+
 def emit(payload: dict) -> None:
     """Print one JSON object per line and flush immediately."""
     sys.stdout.write(json.dumps(payload, separators=(",", ":")) + "\n")
@@ -74,6 +80,8 @@ def main() -> None:
     for raw_line in sys.stdin:
         line = raw_line.strip()
 
+        log(f"STDIO_TEST_MCP: STDIO line in:\n{json.dumps(line, indent=2)}") # DEBUG
+
         if not line:
             continue
 
@@ -83,12 +91,18 @@ def main() -> None:
             emit_mcp_error(message="Parse error", code=-32700)
             continue
 
+        log("STDIO_TEST_MCP: Converted to JSON") # DEBUG
+
         if not isinstance(request, dict):
             emit_mcp_error(message="Invalid Request", code=-32600)
             continue
 
+        log("STDIO_TEST_MCP: Validated dict type") # DEBUG
+
         method = request.get("method")
+        log(f"STDIO_TEST_MCP: {method =}") # DEBUG
         request_id = request.get("id")
+        log(f"STDIO_TEST_MCP: {request_id =}") # DEBUG
 
         if method == "initialize":
             #emit_result(request_id, RESPONSE_TO_INITIALIZE_CALL)
@@ -105,17 +119,23 @@ def main() -> None:
             continue
 
         elif method == "tools/list":
-            emit(
-                {
-                    "jsonrpc": "2.0",
-                    "id": request_id,
-                    "result": {
-                        "tools": [
-                            REVERSE_TOOL_SCHEMA,
-                        ],
-                    },
-                }
-            )
+            toolsListResponse = {
+                "jsonrpc": "2.0",
+                "id": request_id,
+                "result": {
+                    "tools": [
+                        REVERSE_TOOL_SCHEMA,
+                    ],
+                },
+            }
+
+            log(f"STDIO_TEST_MCP: toolsListResponse:\n{json.dumps(toolsListResponse, indent=2)}") # DEBUG
+
+            # pydantic_core._pydantic_core.ValidationError: 1 validation error for ListToolsResult
+            # tools.0.inputSchema.type
+            #   Input should be 'object' [type=literal_error, input_value='string', input_type=str]
+            #     For further information visit https://errors.pydantic.dev/2.13/v/literal_error
+            emit(toolsListResponse)
 
         elif method == "resources/list":
             emit(
@@ -152,7 +172,7 @@ def main() -> None:
 
             a_string = arguments.get("num1")
 
-            if a_string is "" or a_string is None:
+            if a_string == "" or a_string is None:
                 emit(
                     {
                         "jsonrpc": "2.0",
@@ -190,6 +210,8 @@ def main() -> None:
 
         else:
             emit_mcp_error(message="Method not found", code=-32601)
+
+        log("STDIO_TEST_MCP: Exiting main()") # DEBUG
 
 
 if __name__ == "__main__":

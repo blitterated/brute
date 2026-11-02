@@ -73,10 +73,7 @@ async def test_mcp(mcpTestConfigFile):
         test_string = "Pack my box with five-dozen liquor jugs!"
         tool_request_id = 42
         tool_name = "reverse"
-        tool_params = {
-            "name": tool_name,
-            "arguments": { "aString": test_string },
-        }
+        tool_arguments = { "aString": test_string }
 
         print("test_mcp(): calling connect_mcp()") # DEBUG
         await connect_mcp(stack, mcpTestConfigFile)
@@ -84,7 +81,7 @@ async def test_mcp(mcpTestConfigFile):
         # Act
         print("test_mcp(): calling call_tool()") # DEBUG
         print(f"test_mcp(): {tool_name = }") # DEBUG
-        print(f"test_mcp(): params:\n{json.dumps(tool_params)}") # DEBUG
-        found_mcp_tool_response = await call_tool(tool_name, tool_params)
+        print(f"test_mcp(): arguments:\n{json.dumps(tool_arguments)}") # DEBUG
+        found_mcp_tool_response = await call_tool(tool_name, tool_arguments)
 
         print(f"test_mcp(): {found_mcp_tool_response =}") # DEBUG

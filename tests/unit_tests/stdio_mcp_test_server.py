@@ -28,14 +28,15 @@ REVERSE_TOOL_SCHEMA = {
     "name": "reverse",
     "description": "Reverse a string.\n\nArgs:\n    a_string\n",
     "inputSchema": {
+        "type": "object",
         "properties": {
             "a_string": {
                 "title": "a_string",
                 "type": "string",
+                "description": "The target string to reverse.",
             },
         },
         "required": ["a_string"],
-        "type": "string",
     },
 }
 

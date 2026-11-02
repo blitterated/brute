@@ -32,8 +32,6 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
     for name, spec in config["mcpServers"].items():
         params = StdioServerParameters(command=spec["command"], args=spec["args"])
 
-#        print(f"connect_mcp(): mcpServers:\n\tname: {name}\n\tcommand: {spec['command']}\n\targs: {spec['args']}") # DEBUG
-
         try:
             read, write = await stack.enter_async_context(stdio_client(params))
             session = await stack.enter_async_context(ClientSession(read, write))
@@ -42,14 +40,9 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
             print(f"ERROR: connect_mcp() failed to start '{name}'\n{ex}")
             continue
 
-        print(f"connect_mcp(): mcpServer STARTED: {name}") # DEBUG
-
         tools = []
         try:
             tools = (await session.list_tools()).tools
-#            print(f"connect_mcp(): tools type: {type(tools).__name__}") # DEBUG
-#            if len(tools) > 0:
-#                print(f"connect_mcp(): tool type: {type(tools[0]).__name__}") # DEBUG
         except Exception as ex:
             print(f"ERROR: session.list_tools() failed: '{name}'\n{ex}")
             continue
@@ -64,24 +57,19 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
                         "parameters": tool.input_schema,
                     },
             })
-        print(f"MCP connected '{name}': {[t.name for t in tools]}") # DEBUG
+        print(f"MCP connected '{name}': {[t.name for t in tools]}")
 
 
 async def call_tool(tool_name: str, tool_args: dict) -> str:
     """Map a tool call by name to a function or mcp client and call it."""
-    print(f"Tool Call Request:\n\t{tool_name}({tool_args}\n") # DEBUG
+    print(f"Tool Call Request:\n\t{tool_name}({tool_args}")
 
     # Try local tools first.
     if brute.tools.is_local(tool_name):
-        print(f"call_tool(): Call is local: {tool_name = }") # DEBUG
         return brute.tools.run(tool_name, tool_args)
 
     # Otherwise, run an MCP request.
     try:
-        print(f"call_tool(): Call is MCP: {tool_name = }") # DEBUG
-        print(f"test_mcp(): {tool_name = }") # DEBUG
-        print(f"test_mcp(): arguments:\n{json.dumps(tool_args)}") # DEBUG
-
         result = await _mcp_sessions[tool_name].call_tool(tool_name, tool_args)
         return "\n".join(c.text for c in result.content if hasattr(c, "text"))
     except Exception as ex:
@@ -118,7 +106,7 @@ async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:
             tool_args = json.loads(tool_call.function.arguments)
             result = await call_tool(tool_name, tool_args)
 
-            print(f"Tool Call Result:\n{result}\n") # DEBUG
+            print(f"Tool Call Result:\n{result}\n")
 
             messages.append({
                 "role": "tool",

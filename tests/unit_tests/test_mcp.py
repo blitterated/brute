@@ -74,10 +74,12 @@ async def test_mcp(mcpTestConfigFile):
         tool_request_id = 42
         tool_name = "reverse"
         tool_arguments = { "aString": test_string }
+        expected_mcp_tool_response = "\n!sguj rouqil nezod-evif htiw xob ym kcaP"
 
         await connect_mcp(stack, mcpTestConfigFile)
 
         # Act
         found_mcp_tool_response = await call_tool(tool_name, tool_arguments)
 
-        print(f"test_mcp(): {found_mcp_tool_response =}") # DEBUG
+        # Assert
+        assert found_mcp_tool_response == expected_mcp_tool_response

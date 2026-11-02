@@ -24,18 +24,15 @@ _mcp_sessions: dict[str, ClientSession] = {}
 
 async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
     """Read in mcpServers.json config, merge in its tool schemas, and launch each MCP server."""
-    print(f"connect_mcp(): path:    {str(mcpConfigPath)}") # DEBUG
-    with open(str(mcpConfigPath), 'r') as fart: # DEBUG
-        print(f"connect_mcp(): content: {fart.read()}") # DEBUG
-
     config = json.loads(mcpConfigPath.read_text(encoding="utf-8"))
-    print(f"connect_mcp(): config:  {config}") # DEBUG
 
     if len(config["mcpServers"]) < 1:
         print("WARNING: mcpServers.json is empty.")
 
     for name, spec in config["mcpServers"].items():
         params = StdioServerParameters(command=spec["command"], args=spec["args"])
+
+        print(f"connect_mcp(): mcpServers:\n\tname: {name}\n\tcommand: {spec['command']}\n\targs: {spec['args']}") # DEBUG
 
         try:
             read, write = await stack.enter_async_context(stdio_client(params))
@@ -45,7 +42,16 @@ async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
             print(f"ERROR: connect_mcp() failed to start '{name}'\n{ex}")
             continue
 
-        tools = (await session.list_tools()).tools
+        print(f"connect_mcp(): mcpServer STARTED: {name}") # DEBUG
+
+        tools = []
+        try:
+            tools = (await session.list_tools()).tools
+            print(f"connect_mcp(): tools type: {type(tools)}") # DEBUG
+        except Exception as ex:
+            print(f"ERROR: session.list_tools() failed: '{name}'\n{ex}")
+            continue
+
         for tool in tools:
             _mcp_sessions[tool.name] = session
             _tool_schemas.append({

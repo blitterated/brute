@@ -25,27 +25,21 @@ def mcpTestConfigFile(tmp_path: Path) -> Path:
     mcpTestConfigContent = {
         "mcpServers": {
             "reverse": {
-                "command": "uv run",
-                "args": [ "stdio_mcp_test_server.py" ]
+                "command": "uv",
+                "args": [ "run", "tests/unit_tests/stdio_mcp_test_server.py" ]
             },
         }
     }
     mcpTestConfigFile = tmp_path / "mcpServers.json"
-
-    print(f"\nmcpTestConfigFile(): path:    {str(mcpTestConfigFile)}") # DEBUG
-
     mcpTestConfigFile.write_text(json.dumps(mcpTestConfigContent), encoding="utf-8")
-
-    with open(str(mcpTestConfigFile), 'r') as fart: # DEBUG
-        print(f"mcpTestConfigFile(): content: {fart.read()}") # DEBUG
 
     return mcpTestConfigFile
 
 
 def test_show_mcpTestConfigFile(mcpTestConfigFile):
-    print(f"test_show_mcpTestConfigFile(): path:    {str(mcpTestConfigFile)}") # DEBUG
+    print(f"\ntest_show_mcpTestConfigFile(): path:    {str(mcpTestConfigFile)}")
     with open(mcpTestConfigFile, 'r') as cfgFile:
-        print(f"test_show_mcpTestConfigFile(): content: {cfgFile.read()}") # DEBUG
+        print(f"test_show_mcpTestConfigFile(): content: {cfgFile.read()}")
 
 
 # Request:
@@ -83,10 +77,6 @@ async def test_mcp(mcpTestConfigFile):
             "name": tool_name,
             "arguments": { "a_string": test_string },
         }
-
-        print(f"test_mcp(): path:    {str(mcpTestConfigFile)}") # DEBUG
-        with open(str(mcpTestConfigFile), 'r') as fart: # DEBUG
-            print(f"test_mcp(): content: {fart.read()}") # DEBUG
 
         await connect_mcp(stack, mcpTestConfigFile)
 

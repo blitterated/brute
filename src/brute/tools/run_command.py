@@ -1,8 +1,8 @@
 import os
 import subprocess
 
-from .model_tool_exception import tool_exception_handler
-from .model_tool_exception import ModelToolCommandException
+from .builtin_tool_exception import tool_exception_handler
+from .builtin_tool_exception import BuiltinToolCommandException
 
 
 SCHEMA = {
@@ -43,6 +43,6 @@ def run_command (command):
     output = (result.stdout + result.stderr).strip() or f"(no output, exit code {result.returncode})"
 
     if return_code > 0:
-        raise ModelToolCommandException(f"run_command() returned a non-zero exit code: {return_code}\n\n{output}")
+        raise BuiltinToolCommandException(f"run_command() returned a non-zero exit code: {return_code}\n\n{output}")
 
     return output

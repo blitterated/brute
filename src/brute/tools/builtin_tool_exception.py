@@ -1,10 +1,10 @@
 import functools
 import sys
 
-class ModelToolException(Exception):
+class BuiltinToolException(Exception):
     """The model tool specific Exception. Think of it as an envelope for other exceptions."""
 
-class ModelToolCommandException(ModelToolException):
+class BuiltinToolCommandException(BuiltinToolException):
     """The model tool run command specific Exception."""
 
 
@@ -18,7 +18,7 @@ def tool_exception_handler(func):
 
         except Exception as ex:
             ex_class_name = type(ex).__name__
-            err_msg = f"Error in brute.model_tools.{func.__name__}(): {ex_class_name}"
-            raise ModelToolException(err_msg) from ex
+            err_msg = f"Error in brute.tools.{func.__name__}(): {ex_class_name}"
+            raise BuiltinToolException(err_msg) from ex
 
     return wrapper

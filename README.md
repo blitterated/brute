@@ -31,12 +31,12 @@ This signals to anyone developing code using `import brute.secrets as api` that 
 
 The hierarchy of `__init__.py` files can be seen as a filter for module code not intended to be "public".
 
-When brute is started, the top level `__init__.py` imports `model_client` as `client` and `model_tools` as `tools`.
+When brute is started, the top level `__init__.py` imports `model_client` as `client` and `tools` as `tools`.
 
 
 ```python
 import brute.model_client as client
-import brute.model_tools as tools
+import brute.tools as tools
 ```
 
 This effectively exposes anything imported in those modules' `__init__.py` files as functions or properties of `client` and `tools`.

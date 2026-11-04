@@ -8,7 +8,7 @@ from mcp import ClientSession, StdioServerParameters
 #from mcp.client.stdio import stdio_client
 from pathlib import Path
 
-import brute.model_tools as mtools
+import brute.tools as tools
 
 from brute.brute import connect_mcp
 from brute.brute import call_tool

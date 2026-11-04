@@ -8,9 +8,9 @@ from .read_file   import SCHEMA as rf_schema
 from .write_file  import SCHEMA as wf_schema
 from .run_command import SCHEMA as rc_schema
 
-from .model_tool_exception import ModelToolException
-from .model_tool_exception import ModelToolCommandException
-from .model_tool_exception import tool_exception_handler
+from .builtin_tool_exception import BuiltinToolException
+from .builtin_tool_exception import BuiltinToolCommandException
+from .builtin_tool_exception import tool_exception_handler
 
 
 SCHEMAS = [

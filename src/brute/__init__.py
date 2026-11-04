@@ -1,5 +1,5 @@
 import brute.model_client as client
-import brute.model_tools as tools
+import brute.tools as tools
 
 MODEL = "Qwen3.8-27B-8bit"
 

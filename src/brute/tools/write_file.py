@@ -1,7 +1,7 @@
 import os
 import sys
 
-from .model_tool_exception import tool_exception_handler
+from .builtin_tool_exception import tool_exception_handler
 
 
 SCHEMA = {

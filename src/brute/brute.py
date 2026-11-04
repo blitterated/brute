@@ -18,7 +18,7 @@ MCP_CONFIG = PROJECT_ROOT / "mcp_servers.json"
 
 
 # Tool config
-_tool_schemas = brute.tools.SCHEMAS.copy()
+_tool_schemas = brute.tools.schemas.copy()
 _mcp_sessions: dict[str, ClientSession] = {}
 
 

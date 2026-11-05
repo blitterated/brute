@@ -73,8 +73,6 @@ async def call_tool(tool_name: str, tool_args: dict) -> str:
         result = await _mcp_sessions[tool_name].call_tool(tool_name, tool_args)
         return "\n".join(c.text for c in result.content if hasattr(c, "text"))
     except Exception as ex:
-        #err_msg = f"Error running tool call:\n{type(ex).__name__}: {ex}"
-        #return err_msg
         return f"Error running tool call:\n{type(ex).__name__}: {ex}"
 
 

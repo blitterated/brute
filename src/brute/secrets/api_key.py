@@ -2,7 +2,6 @@ import os
 import subprocess
 
 from dataclasses import dataclass
-from pprint import pprint
 
 
 DEFAULT_KEY_PATH = "API/oMLX/api_key"

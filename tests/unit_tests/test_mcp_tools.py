@@ -36,18 +36,11 @@ def mcpTestConfigFile(tmp_path: Path) -> Path:
     return mcpTestConfigFile
 
 
-def test_show_mcpTestConfigFile(mcpTestConfigFile: Path, std_err_logger: StdErrLogger):
-    std_err_logger.debug(f"\ntest_show_mcpTestConfigFile(): path:    {str(mcpTestConfigFile)}")
-    with open(mcpTestConfigFile, 'r') as cfgFile:
-        std_err_logger.debug(f"test_show_mcpTestConfigFile(): content: {cfgFile.read()}")
-
-
 @pytest.mark.asyncio
 async def test_mcp(mcpTestConfigFile, std_err_logger):
     async with AsyncExitStack() as stack:
         # Arrange
         test_string = "Pack my box with five-dozen liquor jugs!"
-        tool_request_id = 42
         tool_arguments = { "aString": test_string }
         expected_mcp_tool_response = "\n!sguj rouqil nezod-evif htiw xob ym kcaP"
 
@@ -62,32 +55,3 @@ async def test_mcp(mcpTestConfigFile, std_err_logger):
 
         # Assert
         assert found_mcp_tool_response == expected_mcp_tool_response
-
-
-
-
-
-# Request:
-#    {
-#        "jsonrpc": "2.0",
-#        "id": 42,
-#        "method": "tools/call",
-#        "params": {
-#            "name": "reverse",
-#            "arguments": {"aString": "Pack my box with five-dozen liquor jugs!"},
-#        },
-#    }
-
-# Response:
-#    {
-#        "jsonrpc": "2.0",
-#        "id": 42,
-#        "result": {
-#            "content": [{
-#                "type":"text",
-#                "text":"",
-#            }],
-#            "isError":false,
-#        },
-#    }
-

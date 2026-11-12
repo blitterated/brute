@@ -1,79 +1,17 @@
+import asyncio
 import json
 
-from openai import AsyncOpenAI
-
-# Imports for MCP
-import asyncio
 from contextlib import AsyncExitStack
-from pathlib import Path
 from mcp import ClientSession, StdioServerParameters
-from mcp.client.stdio import stdio_client
+from openai import AsyncOpenAI
 
 import brute
 
-
-# Project Paths config
-PROJECT_ROOT = Path(__file__).parent
-MCP_CONFIG = PROJECT_ROOT / "mcp_servers.json"
+#from .logging import Loggable
+from .logging import StdErrLogger
 
 
-# Tool config
-_tool_schemas = brute.tools.schemas.copy()
-_mcp_sessions: dict[str, ClientSession] = {}
-
-
-async def connect_mcp(stack: AsyncExitStack, mcpConfigPath: Path) -> None:
-    """Read in mcpServers.json config, merge in its tool schemas, and launch each MCP server."""
-    config = json.loads(mcpConfigPath.read_text(encoding="utf-8"))
-
-    if len(config["mcpServers"]) < 1:
-        print("WARNING: mcpServers.json is empty.")
-
-    for name, spec in config["mcpServers"].items():
-        params = StdioServerParameters(command=spec["command"], args=spec["args"])
-
-        try:
-            read, write = await stack.enter_async_context(stdio_client(params))
-            session = await stack.enter_async_context(ClientSession(read, write))
-            await session.initialize()
-        except Exception as ex:
-            print(f"ERROR: connect_mcp() failed to start '{name}'\n{ex}")
-            continue
-
-        tools = []
-        try:
-            tools = (await session.list_tools()).tools
-        except Exception as ex:
-            print(f"ERROR: session.list_tools() failed: '{name}'\n{ex}")
-            continue
-
-        for tool in tools:
-            _mcp_sessions[tool.name] = session
-            _tool_schemas.append({
-                    "type": "function",
-                    "function": {
-                        "name": tool.name,
-                        "description": tool.description,
-                        "parameters": tool.input_schema,
-                    },
-            })
-        print(f"MCP connected '{name}': {[t.name for t in tools]}")
-
-
-async def call_tool(tool_name: str, tool_args: dict) -> str:
-    """Map a tool call by name to a function or mcp client and call it."""
-    print(f"Tool Call Request:\n\t{tool_name}({tool_args}")
-
-    # Try local tools first.
-    if brute.tools.is_local(tool_name):
-        return brute.tools.run(tool_name, tool_args)
-
-    # Otherwise, run an MCP request.
-    try:
-        result = await _mcp_sessions[tool_name].call_tool(tool_name, tool_args)
-        return "\n".join(c.text for c in result.content if hasattr(c, "text"))
-    except Exception as ex:
-        return f"Error running tool call:\n{type(ex).__name__}: {ex}"
+LOG = StdErrLogger()
 
 
 async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:
@@ -87,7 +25,7 @@ async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:
     while True:
         response = await client.chat.completions.create(
             model=brute.MODEL,
-            messages=messages,
+            messags=messages,
             tools=_tool_schemas,
         )
         response_msg = response.choices[0].message
@@ -104,7 +42,7 @@ async def run_agent_loop(client: AsyncOpenAI, messages: list) -> str:
             tool_args = json.loads(tool_call.function.arguments)
             result = await call_tool(tool_name, tool_args)
 
-            print(f"Tool Call Result:\n{result}\n")
+            LOG.info(f"Tool Call Result:\n{result}\n")
 
             messages.append({
                 "role": "tool",
@@ -152,7 +90,7 @@ async def launch_user_loop() -> None:
         try:
             await run_user_loop(client, messages)
         except(EOFError, KeyboardInterrupt):
-            print("\nEND OF LINE")
+            LOG.info("\nEND OF LINE")
 
 
 def main() -> None:

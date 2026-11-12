@@ -20,3 +20,7 @@ class BuiltinTool(ABC, CallableTool):
 
     @abstractmethod
     async def run(self, args: dict) -> str: pass
+
+
+    def __copy__(self):
+        return type(self)()

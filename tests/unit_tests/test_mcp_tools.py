@@ -5,13 +5,13 @@ import re
 
 from contextlib import AsyncExitStack
 from mcp import ClientSession, StdioServerParameters
-#from mcp.client.stdio import stdio_client
 from pathlib import Path
 
-import brute.tools as tools
+from brute.logging import StdErrLogger
+from brute.tools import ToolManager
+from brute.tools.mcp import McpServerManager
 
-from brute.brute import connect_mcp
-from brute.brute import call_tool
+TEST_TOOL_NAME = "reverse"
 
 
 @pytest.fixture()
@@ -24,7 +24,7 @@ def mcpTestConfigFile(tmp_path: Path) -> Path:
     """
     mcpTestConfigContent = {
         "mcpServers": {
-            "reverse": {
+            TEST_TOOL_NAME: {
                 "command": "uv",
                 "args": [ "run", "tests/unit_tests/stdio_mcp_test_server.py" ]
             },
@@ -36,10 +36,35 @@ def mcpTestConfigFile(tmp_path: Path) -> Path:
     return mcpTestConfigFile
 
 
-def test_show_mcpTestConfigFile(mcpTestConfigFile):
-    print(f"\ntest_show_mcpTestConfigFile(): path:    {str(mcpTestConfigFile)}")
+def test_show_mcpTestConfigFile(mcpTestConfigFile: Path, std_err_logger: StdErrLogger):
+    std_err_logger.debug(f"\ntest_show_mcpTestConfigFile(): path:    {str(mcpTestConfigFile)}")
     with open(mcpTestConfigFile, 'r') as cfgFile:
-        print(f"test_show_mcpTestConfigFile(): content: {cfgFile.read()}")
+        std_err_logger.debug(f"test_show_mcpTestConfigFile(): content: {cfgFile.read()}")
+
+
+@pytest.mark.asyncio
+async def test_mcp(mcpTestConfigFile, std_err_logger):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        test_string = "Pack my box with five-dozen liquor jugs!"
+        tool_request_id = 42
+        tool_arguments = { "aString": test_string }
+        expected_mcp_tool_response = "\n!sguj rouqil nezod-evif htiw xob ym kcaP"
+
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile, std_err_logger)
+        await mcp_mgr.launch_servers()
+
+        tool_mgr = ToolManager(std_err_logger)
+        tool_mgr.load_tools(mcp_mgr)
+
+        # Act
+        found_mcp_tool_response = await tool_mgr.call(TEST_TOOL_NAME, tool_arguments)
+
+        # Assert
+        assert found_mcp_tool_response == expected_mcp_tool_response
+
+
+
 
 
 # Request:
@@ -66,20 +91,3 @@ def test_show_mcpTestConfigFile(mcpTestConfigFile):
 #        },
 #    }
 
-@pytest.mark.asyncio
-async def test_mcp(mcpTestConfigFile):
-    async with AsyncExitStack() as stack:
-        # Arrange
-        test_string = "Pack my box with five-dozen liquor jugs!"
-        tool_request_id = 42
-        tool_name = "reverse"
-        tool_arguments = { "aString": test_string }
-        expected_mcp_tool_response = "\n!sguj rouqil nezod-evif htiw xob ym kcaP"
-
-        await connect_mcp(stack, mcpTestConfigFile)
-
-        # Act
-        found_mcp_tool_response = await call_tool(tool_name, tool_arguments)
-
-        # Assert
-        assert found_mcp_tool_response == expected_mcp_tool_response

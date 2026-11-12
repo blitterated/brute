@@ -16,14 +16,6 @@ from ..loadable_tools import LoadableTools
 from .mcp_tool import McpTool
 
 
-
-
-from inspect import getmembers
-
-
-
-
-
 class McpServerManager(LoadableTools):
     # Project Paths config
     #_projectRoot = Path(__file__).parent
@@ -37,8 +29,6 @@ class McpServerManager(LoadableTools):
 
         self._mcp_tools: list[McpTool] = []
 
-        self._log.debug(f"McpServerManager.init(): _mcp_configs:\n\t{json.dumps(self._mcp_configs)}") # DEBUG
-
 
     @property
     def tools(self) -> Sequence[CallableTool]:
@@ -46,13 +36,6 @@ class McpServerManager(LoadableTools):
 
 
     def _generate_tool_schema(self, tool) -> dict:
-
-        self._log.debug(f"McpServerManager._generate_tool_schema(): tool class: \"{type(tool).__name__}\"") # DEBUG
-
-        for mbr_name, mbr_val in tool:
-            self._log.debug(f"\ttool members: {mbr_name}: {mbr_val}") # DEBUG
-
-
         return {
             "type": "function",
             "function": {
@@ -68,15 +51,9 @@ class McpServerManager(LoadableTools):
 
     async def start_server(self, params: StdioServerParameters) -> ClientSession:
         """Launch an MCP server process in an async context."""
-
-        self._log.debug(f"McpServerManager.start_server(): Creating client session") # DEBUG
-
         read, write = await self._stack.enter_async_context(stdio_client(params))
         session = await self._stack.enter_async_context(ClientSession(read, write))
         await session.initialize()
-
-        self._log.debug(f"McpServerManager.start_server(): Client session created") # DEBUG
-
         return session
 
 
@@ -88,9 +65,6 @@ class McpServerManager(LoadableTools):
 
         for routing_name, spec in self._mcp_configs.items():
             params = self._get_server_params_from_spec(spec)
-            self._log.debug(f"McpServerManager.launch_servers(): params class: \"{type(params).__name__}\"") # DEBUG
-            self._log.debug(f"McpServerManager.launch_servers(): Created params for \"{routing_name}\"") # DEBUG
-            self._log.debug(f"McpServerManager.launch_servers(): spec:\n\t\"{spec}\"") # DEBUG
 
             # Start the MCP server and capture its session instance.
             try:
@@ -103,18 +77,7 @@ class McpServerManager(LoadableTools):
             try:
                 # TODO: Tap into session's tool pagination with `cursor=` parameter.
                 list_tools_result = (await session.list_tools())
-
-                self._log.debug(f"McpServerManager.launch_servers(): list_tools_result module: \"{type(list_tools_result).__module__}\"") # DEBUG
-                self._log.debug(f"McpServerManager.launch_servers(): list_tools_result class: \"{type(list_tools_result).__name__}\"") # DEBUG
-
-
-#                ltr_members = getmembers(type(list_tools_result)) # DEBUG
-#                for name, _ in ltr_members:
-#                    self._log.debug(f"\t{name}") # DEBUG
-
                 new_tools = list_tools_result.tools
-
-                self._log.debug(f"McpServerManager.launch_servers(): mcp_tools count: {len(new_tools)}") # DEBUG
 
             except Exception as ex:
                 self._log.error(f"ERROR: session.list_tools() failed: '{routing_name}'\n{ex}")
@@ -124,8 +87,5 @@ class McpServerManager(LoadableTools):
             for tool in new_tools:
                 schema = self._generate_tool_schema(tool)
                 self._mcp_tools.append(McpTool(routing_name, schema, session))
-
-                self._log.debug(f"McpServerManager.launch_servers(): \"{routing_name}\" tool schema:\n{json.dumps(schema)}") # DEBUG
-                self._log.debug(f"McpServerManager.launch_servers(): _mcp_tools count: {len(self._mcp_tools)}") # DEBUG
 
             self._log.info(f"MCP connected '{routing_name}': {[tl.name for tl in new_tools]}")

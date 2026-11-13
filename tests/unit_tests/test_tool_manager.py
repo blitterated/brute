@@ -165,27 +165,12 @@ def test_remove_tool_with_fully_populated_toolmanager(
     for t in loadable_tools_stub.tools: # DEBUG
         p_stderr(f"\t{t.routing_name}") # DEBUG
 
-    # Arrange
-    tool_mgr = ToolManager(logger_mock)
-    tool_mgr.load_tools(loadable_tools_stub)
-    tool_mgr.add_tool(tool_mock)
-
-    expected_result: bool = True
-    expected_count:   int = len(loadable_tools_stub.tools)
-
-    p_stderr("ToolManager tools BEFORE") # DEBUG
-    dump_tools(tool_mgr) # DEBUG
-
-    # Act
-    found_result = tool_mgr.remove_tool(tool_mock)
-
-    p_stderr("ToolManager tools AFTER") # DEBUG
-    dump_tools(tool_mgr) # DEBUG
-
-    # Assert
-    assert len(tool_mgr.list_tools()) == expected_count
-    assert found_result == expected_result
-    assert tool_mock.routing_name not in tool_mgr.list_tools()
+    _test_remove_tool_with_populated_toolmanager(
+        logger_mock,
+        loadable_tools_stub,
+        tool_mock,
+        True
+    )
 
 
 def test_remove_tool_with_mostly_populated_toolmanager(
@@ -195,13 +180,30 @@ def test_remove_tool_with_mostly_populated_toolmanager(
     ):
     p_stderr("\ntest_remove_tool_with_mostly_populated_toolmanager\n") # DEBUG
 
+    _test_remove_tool_with_populated_toolmanager(
+        logger_mock,
+        loadable_tools_stub,
+        tool_mock,
+        False
+    )
+
+
+def _test_remove_tool_with_populated_toolmanager(
+        logger_mock: LoggerMock,
+        loadable_tools_stub: LoadableToolsStub,
+        tool_mock: ToolMock,
+        should_add_tool_mock: bool,
+    ):
+    p_stderr("\n_test_remove_tool_with_populated_toolmanager\n") # DEBUG
+
     # Arrange
     tool_mgr = ToolManager(logger_mock)
     tool_mgr.load_tools(loadable_tools_stub)
-    # We don't add the tool_mock for this test.
+    if should_add_tool_mock:
+        tool_mgr.add_tool(tool_mock)
 
-    expected_result: bool = False
     expected_count:   int = len(loadable_tools_stub.tools)
+    expected_result: bool = should_add_tool_mock
 
     p_stderr("ToolManager tools BEFORE") # DEBUG
     dump_tools(tool_mgr) # DEBUG

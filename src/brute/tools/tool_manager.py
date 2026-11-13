@@ -9,11 +9,9 @@ from .mcp import McpTool
 
 
 class ToolManager:
-    _tools: dict[str, CallableTool] = {}
-
-
     def __init__(self, log: Loggable):
         self._log: Loggable = log
+        self._tools: dict[str, CallableTool] = {}
 
 
     def add_tool(self, tool: CallableTool) -> None:

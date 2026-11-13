@@ -14,6 +14,10 @@ class ToolManager:
         self._tools: dict[str, CallableTool] = {}
 
 
+    def list_tools(self) -> list[str]:
+        return sorted(list(self._tools.keys()))
+
+
     def add_tool(self, tool: CallableTool) -> None:
         if tool.routing_name in self._tools:
             raise Exception(f"'{tool.routing_name}' already exists in ToolManager's collection. Remove it first.")

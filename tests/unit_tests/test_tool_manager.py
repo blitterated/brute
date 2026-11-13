@@ -160,11 +160,6 @@ def test_remove_tool_with_fully_populated_toolmanager(
         loadable_tools_stub: LoadableToolsStub,
         tool_mock: ToolMock
     ):
-    p_stderr("\ntest_remove_tool_with_fully_populated_toolmanager\n") # DEBUG
-    p_stderr("LoadableToolsStub tools:") # DEBUG
-    for t in loadable_tools_stub.tools: # DEBUG
-        p_stderr(f"\t{t.routing_name}") # DEBUG
-
     _test_remove_tool_with_populated_toolmanager(
         logger_mock,
         loadable_tools_stub,
@@ -178,8 +173,6 @@ def test_remove_tool_with_mostly_populated_toolmanager(
         loadable_tools_stub: LoadableToolsStub,
         tool_mock: ToolMock
     ):
-    p_stderr("\ntest_remove_tool_with_mostly_populated_toolmanager\n") # DEBUG
-
     _test_remove_tool_with_populated_toolmanager(
         logger_mock,
         loadable_tools_stub,
@@ -194,8 +187,6 @@ def _test_remove_tool_with_populated_toolmanager(
         tool_mock: ToolMock,
         should_add_tool_mock: bool,
     ):
-    p_stderr("\n_test_remove_tool_with_populated_toolmanager\n") # DEBUG
-
     # Arrange
     tool_mgr = ToolManager(logger_mock)
     tool_mgr.load_tools(loadable_tools_stub)
@@ -205,14 +196,8 @@ def _test_remove_tool_with_populated_toolmanager(
     expected_count:   int = len(loadable_tools_stub.tools)
     expected_result: bool = should_add_tool_mock
 
-    p_stderr("ToolManager tools BEFORE") # DEBUG
-    dump_tools(tool_mgr) # DEBUG
-
     # Act
     found_result = tool_mgr.remove_tool(tool_mock)
-
-    p_stderr("ToolManager tools AFTER") # DEBUG
-    dump_tools(tool_mgr) # DEBUG
 
     # Assert
     assert len(tool_mgr.list_tools()) == expected_count

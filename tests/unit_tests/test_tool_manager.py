@@ -104,8 +104,9 @@ async def test_add_tool_throws_exception_with_duplicate_key(logger_mock: LoggerM
     expected_msg = f"'{tool_mock.routing_name}' already exists in ToolManager's collection. Remove it first."
     tool_mgr = ToolManager(logger_mock)
 
-    # We don't care about this one
+    # Add the tool to the empty ToolManager.
     tool_mgr.add_tool(tool_mock)
 
+    # Adding the tool again should throw an exception.
     with pytest.raises(Exception, match=re.escape(expected_msg)):
         tool_mgr.add_tool(tool_mock)

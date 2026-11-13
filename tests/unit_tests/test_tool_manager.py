@@ -145,6 +145,28 @@ def test_add_tool_throws_exception_with_duplicate_key(logger_mock: LoggerMock, t
         tool_mgr.add_tool(tool_mock)
 
 
+def test_load_tools(
+        logger_mock: LoggerMock,
+        loadable_tools_stub: LoadableToolsStub,
+    ):
+    # Arrange
+    tool_mgr = ToolManager(logger_mock)
+
+    # Act
+    tool_mgr.load_tools(loadable_tools_stub)
+
+    # Acquire
+
+    #expected_tools: Sequence[CallableTool] = loadable_tools_stub.tools
+    expected_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+    found_tools: list[str] = tool_mgr.list_tools()
+
+    # Assert
+    assert len(found_tools) == len(expected_tools)
+    for t in expected_tools:
+        assert t in found_tools
+
+
 def test_remove_tool_with_empty_toolmanager(logger_mock: LoggerMock, tool_mock: ToolMock):
     tool_mgr = ToolManager(logger_mock)
     expected_result = False

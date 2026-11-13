@@ -1,6 +1,7 @@
 import builtins
 import pytest
 import re
+import sys
 
 from brute.logging import Loggable
 from brute.tools import CallableTool, ToolManager
@@ -72,6 +73,20 @@ def logger_mock() -> LoggerMock:
 @pytest.fixture
 def tool_mock() -> ToolMock:
     return ToolMock()
+
+
+def p_stderr(text: str) -> None:
+    print(text, file=sys.stderr)
+
+
+def dump_tools(tool_mgr: ToolManager):
+    p_stderr(f"\ntool_mgr id: {id(tool_mgr)}")
+
+    existing_tools = tool_mgr.list_tools()
+    p_stderr(f"\ntool count: {len(existing_tools)}")
+
+    for et in existing_tools:
+        p_stderr(f"\n\t{et}")
 
 
 @pytest.mark.asyncio

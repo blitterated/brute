@@ -91,12 +91,8 @@ def dump_tools(tool_mgr: ToolManager):
 
 @pytest.mark.asyncio
 async def test_add_tool(logger_mock: LoggerMock, tool_mock: ToolMock):
-    p_stderr("\ntest_add_tool()") # DEBUG
     tool_mgr = ToolManager(logger_mock)
-    dump_tools(tool_mgr) # DEBUG
-
     tool_mgr.add_tool(tool_mock)
-    dump_tools(tool_mgr) # DEBUG
 
     found_result = await tool_mgr.call(tool_mock.routing_name, tool_mock.canned_args)
 
@@ -105,14 +101,11 @@ async def test_add_tool(logger_mock: LoggerMock, tool_mock: ToolMock):
 
 @pytest.mark.asyncio
 async def test_add_tool_throws_exception_with_duplicate_key(logger_mock: LoggerMock, tool_mock: ToolMock):
-    p_stderr("\ntest_add_tool_throws_exception_with_duplicate_key()") # DEBUG
     expected_msg = f"'{tool_mock.routing_name}' already exists in ToolManager's collection. Remove it first."
     tool_mgr = ToolManager(logger_mock)
-    dump_tools(tool_mgr) # DEBUG
 
     # We don't care about this one
     tool_mgr.add_tool(tool_mock)
-    dump_tools(tool_mgr) # DEBUG
 
     with pytest.raises(Exception, match=re.escape(expected_msg)):
         tool_mgr.add_tool(tool_mock)

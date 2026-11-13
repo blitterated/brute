@@ -64,12 +64,12 @@ class ToolMock(CallableTool):
         return self.canned_run_response
 
 
-@pytest.fixture()
+@pytest.fixture
 def logger_mock() -> LoggerMock:
     return LoggerMock()
 
 
-@pytest.fixture()
+@pytest.fixture
 def tool_mock() -> ToolMock:
     return ToolMock()
 

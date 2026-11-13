@@ -17,12 +17,10 @@ class ToolManager:
 
 
     def add_tool(self, tool: CallableTool) -> None:
-        key = tool.routing_name
+        if tool.routing_name in self._tools:
+            raise Exception(f"'{tool.routing_name}' already exists in ToolManager's collection. Remove it first.")
 
-        if key in self._tools:
-            raise Exception(f"'{key}' already exists in ToolManager's collection. Remove it first.")
-
-        self._tools[key] = tool
+        self._tools[tool.routing_name] = tool
 
 
     def load_tools(self, loadable: LoadableTools) -> None:
@@ -31,14 +29,13 @@ class ToolManager:
 
 
     def remove_tool(self, tool: CallableTool) -> bool:
-        key = tool.routing_name
-        key_found = False
+        tool_found = False
 
-        if key in self._tools:
-            del self._tools[key]
-            key_found = True
+        if tool.routing_name in self._tools:
+            del self._tools[tool.routing_name]
+            tool_found = True
 
-        return key_found
+        return tool_found
 
 
     @property

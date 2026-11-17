@@ -252,20 +252,20 @@ async def test_builtin_tools(
         tool_mgr.load_tools(mcp_mgr)
         tool_mgr.add_tool(tool_mock)
 
-        expected_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+        expected_builtin_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
 
-        p_stderr("\ntest_builtin_tools: expected_tools:") # DEBUG
-        for xt in expected_tools: # DEBUG
-            p_stderr(f"\t{xt}") # DEBUG
+        p_stderr("\test_builtin_tools_and_mcp_tools: expected_builtin_tools:") # DEBUG
+        for xbt in expected_builtin_tools: # DEBUG
+            p_stderr(f"\t{xbt}") # DEBUG
 
         # Act
-        found_tools: dict[str, CallableTool] = tool_mgr.builtin_tools
+        found_builtin_tools: dict[str, CallableTool] = tool_mgr.builtin_tools
 
-        p_stderr("\ntest_builtin_tools: found_tools:") # DEBUG
-        for rt_name in found_tools.keys(): # DEBUG
+        p_stderr("\test_builtin_tools_and_mcp_tools: found_builtin_tools:") # DEBUG
+        for rt_name in found_builtin_tools.keys(): # DEBUG
             p_stderr(f"\t{rt_name}") # DEBUG
 
         # Assert
-        assert len(found_tools) == len(expected_tools)
-        for xt in expected_tools:
-            assert xt in found_tools
+        assert len(found_builtin_tools) == len(expected_builtin_tools)
+        for xt in expected_builtin_tools:
+            assert xt in found_builtin_tools

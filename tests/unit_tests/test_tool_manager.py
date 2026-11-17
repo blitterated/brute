@@ -257,6 +257,10 @@ async def test_builtin_tools(
         assert len(found_builtin_tools) == len(expected_builtin_tools)
         for xt in expected_builtin_tools:
             assert xt in found_builtin_tools
+
+
+@pytest.mark.asyncio
+async def test_mcp_tools(
         #logger_mock: LoggerMock,
         std_err_logger: StdErrLogger,
         loadable_tools_stub: LoadableToolsStub,
@@ -278,20 +282,21 @@ async def test_builtin_tools(
         tool_mgr.load_tools(mcp_mgr)
         tool_mgr.add_tool(tool_mock)
 
-        expected_builtin_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+        p_stderr(f"Tool #1: {mcp_mgr.tools[0].routing_name}") # DEBUG
+        expected_mcp_tools: list[str] = [t.routing_name for t in mcp_mgr.tools]
 
-        p_stderr("\test_builtin_tools_and_mcp_tools: expected_builtin_tools:") # DEBUG
-        for xbt in expected_builtin_tools: # DEBUG
-            p_stderr(f"\t{xbt}") # DEBUG
+        p_stderr("test_mcp_tools: expected_mcp_tools:") # DEBUG
+        for xmt in expected_mcp_tools: # DEBUG
+            p_stderr(f"\t{xmt}") # DEBUG
 
         # Act
-        found_builtin_tools: dict[str, CallableTool] = tool_mgr.builtin_tools
+        found_mcp_tools: dict[str, CallableTool] = tool_mgr.mcp_tools
 
-        p_stderr("\test_builtin_tools_and_mcp_tools: found_builtin_tools:") # DEBUG
-        for rt_name in found_builtin_tools.keys(): # DEBUG
+        p_stderr("test_mcp_tools: found_mcp_tools:") # DEBUG
+        for rt_name in found_mcp_tools.keys(): # DEBUG
             p_stderr(f"\t{rt_name}") # DEBUG
 
         # Assert
-        assert len(found_builtin_tools) == len(expected_builtin_tools)
-        for xt in expected_builtin_tools:
-            assert xt in found_builtin_tools
+        assert len(found_mcp_tools) == len(expected_mcp_tools)
+        for xt in expected_mcp_tools:
+            assert xt in found_mcp_tools

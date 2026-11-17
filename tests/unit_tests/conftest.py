@@ -37,7 +37,7 @@ def generate_expected_file(tmp_path: Path) -> Callable[[str, bool], ExpectedFile
 @pytest.fixture()
 def mcpTestConfigFile(
     tmp_path: Path,
-    mcpTestConfig: Callable[[str], dict[str, dict]]
+    mcpTestConfig: Callable[[str], str],
 ) -> Callable[[str], Path]:
     """
     Generate and return an mcpServers.json file for testing purposes.
@@ -46,7 +46,7 @@ def mcpTestConfigFile(
     In this case, it is just a simple string reversing MCP server.
     """
     def generate(routing_name: str) -> Path:
-        mcpTestConfigContent = json.dumps(mcpTestConfig(routing_name))
+        mcpTestConfigContent = mcpTestConfig(routing_name)
         mcpTestConfigFile = tmp_path / "mcpServers.json"
         mcpTestConfigFile.write_text(mcpTestConfigContent, encoding="utf-8")
         return mcpTestConfigFile
@@ -55,7 +55,7 @@ def mcpTestConfigFile(
 
 
 @pytest.fixture()
-def mcpTestConfig() -> Callable[[str], dict[str, dict]]:
+def mcpTestConfig() -> Callable[[str], str]:
     """
     Generate and return multiple MCP server configurations for
     an mcpServers.json file to be used during testing.
@@ -63,7 +63,7 @@ def mcpTestConfig() -> Callable[[str], dict[str, dict]]:
     They're separate instances of the same MCP server (reverse)
     but with a different routing name.
     """
-    def generate(*routing_names: str) -> dict[str, dict]:
+    def generate(*routing_names: str) -> str:
         """Create config for an mcpServers.json config file."""
         mcpServerConfigs: dict[str, dict] = { "mcpServers": {} }
 
@@ -73,6 +73,6 @@ def mcpTestConfig() -> Callable[[str], dict[str, dict]]:
                 "args": [ "run", "tests/unit_tests/stdio_mcp_test_server.py" ]
             }
 
-        return mcpServerConfigs
+        return json.dumps(mcpServerConfigs)
 
     return generate

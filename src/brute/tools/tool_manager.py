@@ -42,12 +42,16 @@ class ToolManager:
 
     @property
     def builtin_tools(self) -> dict[str, CallableTool]:
-        return {k: v for k, v in self._tools if isinstance(v, BuiltinTool)}
+        self._log.debug("\nToolManager: builtin_tools: self._tools:") # DEBUG
+        for rt_name in self._tools.keys(): # DEBUG
+            self._log.debug(f"\t{rt_name}") # DEBUG
+
+        return {k: v for k, v in self._tools.items() if isinstance(v, BuiltinTool)}
 
 
     @property
     def mcp_tools(self) -> dict[str, CallableTool]:
-        return {k: v for k, v in self._tools if isinstance(v, McpTool)}
+        return {k: v for k, v in self._tools.items() if isinstance(v, McpTool)}
 
 
     async def call(self, name: str, args: dict) -> str:

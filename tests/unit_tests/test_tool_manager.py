@@ -156,8 +156,6 @@ def test_load_tools(
     tool_mgr.load_tools(loadable_tools_stub)
 
     # Acquire
-
-    #expected_tools: Sequence[CallableTool] = loadable_tools_stub.tools
     expected_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
     found_tools: list[str] = tool_mgr.list_tools()
 

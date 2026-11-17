@@ -3,12 +3,16 @@ import pytest
 import re
 import sys
 
+from collections.abc import Callable
 from collections.abc import Sequence
+from contextlib import AsyncExitStack
+from pathlib import Path
 
 import brute.tools.builtins as btools
 
-from brute.logging import Loggable
-from brute.tools import CallableTool, ToolManager, LoadableTools
+from brute.logging import Loggable, StdErrLogger
+from brute.tools import CallableTool, LoadableTools, ToolManager
+from brute.tools.mcp import McpServerManager
 
 
 ############################################################
@@ -223,3 +227,45 @@ def _test_remove_tool_with_populated_toolmanager(
     assert len(tool_mgr.list_tools()) == expected_count
     assert found_result == expected_result
     assert tool_mock.routing_name not in tool_mgr.list_tools()
+
+
+@pytest.mark.asyncio
+async def test_builtin_tools(
+        #logger_mock: LoggerMock,
+        std_err_logger: StdErrLogger,
+        loadable_tools_stub: LoadableToolsStub,
+        tool_mock: ToolMock,
+        mcpTestConfigFile: Callable[[str], Path],
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        test_tool_name = "reverse"
+
+        #mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), logger_mock)
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), std_err_logger) # DEBUG
+
+        await mcp_mgr.launch_servers()
+
+        #tool_mgr = ToolManager(logger_mock)
+        tool_mgr = ToolManager(std_err_logger) # DEBUG
+        tool_mgr.load_tools(loadable_tools_stub)
+        tool_mgr.load_tools(mcp_mgr)
+        tool_mgr.add_tool(tool_mock)
+
+        expected_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+
+        p_stderr("\ntest_builtin_tools: expected_tools:") # DEBUG
+        for xt in expected_tools: # DEBUG
+            p_stderr(f"\t{xt}") # DEBUG
+
+        # Act
+        found_tools: dict[str, CallableTool] = tool_mgr.builtin_tools
+
+        p_stderr("\ntest_builtin_tools: found_tools:") # DEBUG
+        for rt_name in found_tools.keys(): # DEBUG
+            p_stderr(f"\t{rt_name}") # DEBUG
+
+        # Assert
+        assert len(found_tools) == len(expected_tools)
+        for xt in expected_tools:
+            assert xt in found_tools

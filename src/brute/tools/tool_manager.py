@@ -42,10 +42,6 @@ class ToolManager:
 
     @property
     def builtin_tools(self) -> dict[str, CallableTool]:
-        self._log.debug("\nToolManager: builtin_tools: self._tools:") # DEBUG
-        for rt_name in self._tools.keys(): # DEBUG
-            self._log.debug(f"\t{rt_name}") # DEBUG
-
         return {k: v for k, v in self._tools.items() if isinstance(v, BuiltinTool)}
 
 

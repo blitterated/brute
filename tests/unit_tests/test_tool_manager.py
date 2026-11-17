@@ -261,8 +261,7 @@ async def test_builtin_tools(
 
 @pytest.mark.asyncio
 async def test_mcp_tools(
-        #logger_mock: LoggerMock,
-        std_err_logger: StdErrLogger,
+        logger_mock: LoggerMock,
         loadable_tools_stub: LoadableToolsStub,
         tool_mock: ToolMock,
         mcpTestConfigFile: Callable[[str], Path],
@@ -271,30 +270,19 @@ async def test_mcp_tools(
         # Arrange
         test_tool_name = "reverse"
 
-        #mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), logger_mock)
-        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), std_err_logger) # DEBUG
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), logger_mock)
 
         await mcp_mgr.launch_servers()
 
-        #tool_mgr = ToolManager(logger_mock)
-        tool_mgr = ToolManager(std_err_logger) # DEBUG
+        tool_mgr = ToolManager(logger_mock)
         tool_mgr.load_tools(loadable_tools_stub)
         tool_mgr.load_tools(mcp_mgr)
         tool_mgr.add_tool(tool_mock)
 
-        p_stderr(f"Tool #1: {mcp_mgr.tools[0].routing_name}") # DEBUG
         expected_mcp_tools: list[str] = [t.routing_name for t in mcp_mgr.tools]
-
-        p_stderr("test_mcp_tools: expected_mcp_tools:") # DEBUG
-        for xmt in expected_mcp_tools: # DEBUG
-            p_stderr(f"\t{xmt}") # DEBUG
 
         # Act
         found_mcp_tools: dict[str, CallableTool] = tool_mgr.mcp_tools
-
-        p_stderr("test_mcp_tools: found_mcp_tools:") # DEBUG
-        for rt_name in found_mcp_tools.keys(): # DEBUG
-            p_stderr(f"\t{rt_name}") # DEBUG
 
         # Assert
         assert len(found_mcp_tools) == len(expected_mcp_tools)

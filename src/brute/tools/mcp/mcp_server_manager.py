@@ -26,27 +26,15 @@ class McpServerManager(LoadableTools):
         self._stack: AsyncExitStack = stack
         self._log: Loggable = log
 
-        mcpConfig: str = mcpConfigPath.read_text(encoding="utf-8") # DEBUG
-        self._log.debug(f"McpServerManager.__init__: mcpConfig:\n{mcpConfig}") # DEBUG
-        self._mcp_configs: dict = json.loads(mcpConfig)["mcpServers"] # DEBUG
-        #self._mcp_configs: dict = json.loads(mcpConfigPath.read_text(encoding="utf-8"))["mcpServers"]
+        mcpConfig: str = mcpConfigPath.read_text(encoding="utf-8")
+        self._mcp_configs: dict = json.loads(mcpConfig)["mcpServers"]
 
         self._mcp_tools: list[McpTool] = []
 
 
     @property
     def tools(self) -> Sequence[CallableTool]:
-        self._log.debug("McpServerManager.tools:") # DEBUG
-        for mt in self._mcp_tools: # DEBUG
-            self._log.debug(f"\t{mt.routing_name}") # DEBUG
-
-        tools_copy = copy(self._mcp_tools)
-
-        self._log.debug("McpServerManager.tools copy:") # DEBUG
-        for ct in tools_copy: # DEBUG
-            self._log.debug(f"\t{ct.routing_name}") # DEBUG
-
-        return tools_copy
+        return copy(self._mcp_tools)
 
 
     def _generate_tool_schema(self, tool) -> dict:

@@ -231,6 +231,32 @@ def _test_remove_tool_with_populated_toolmanager(
 
 @pytest.mark.asyncio
 async def test_builtin_tools(
+        logger_mock: LoggerMock,
+        loadable_tools_stub: LoadableToolsStub,
+        tool_mock: ToolMock,
+        mcpTestConfigFile: Callable[[str], Path],
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        test_tool_name = "reverse"
+
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), logger_mock)
+        await mcp_mgr.launch_servers()
+
+        tool_mgr = ToolManager(logger_mock)
+        tool_mgr.load_tools(loadable_tools_stub)
+        tool_mgr.load_tools(mcp_mgr)
+        tool_mgr.add_tool(tool_mock)
+
+        expected_builtin_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+
+        # Act
+        found_builtin_tools: dict[str, CallableTool] = tool_mgr.builtin_tools
+
+        # Assert
+        assert len(found_builtin_tools) == len(expected_builtin_tools)
+        for xt in expected_builtin_tools:
+            assert xt in found_builtin_tools
         #logger_mock: LoggerMock,
         std_err_logger: StdErrLogger,
         loadable_tools_stub: LoadableToolsStub,

@@ -9,10 +9,10 @@ from typing import Unpack
 
 @dataclass
 class ExpectedFile:
-    path:    str
-    name:    str
-    full_path:     str
-    content: str
+    path:       str
+    name:       str
+    full_path:  str
+    content:    str
 
 
 @pytest.fixture()

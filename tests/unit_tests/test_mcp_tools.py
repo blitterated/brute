@@ -12,7 +12,7 @@ from brute.tools import ToolManager
 from brute.tools.mcp import McpServerManager
 
 @pytest.mark.asyncio
-async def test_mcp(mcpTestConfigFile, std_err_logger):
+async def test_mcp_stack(mcpTestConfigFile, std_err_logger):
     async with AsyncExitStack() as stack:
         # Arrange
         test_tool_name = "reverse"

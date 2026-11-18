@@ -39,8 +39,6 @@ async def test_tools_property(mcpTestConfigFile, std_err_logger):
         # Arrange
         expected_mcp_tools = sorted([f"reverse_{x+1}" for x in range(5)])
 
-        std_err_logger.debug(f"\ntest_tools_property: expected_mcp_tools:\n\t{expected_mcp_tools}") # DEBUG
-
         mcp_mgr = McpServerManager(stack, mcpTestConfigFile(*expected_mcp_tools), std_err_logger)
         await mcp_mgr.launch_servers()
 

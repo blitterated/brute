@@ -127,6 +127,50 @@ def dump_tools(tool_mgr: ToolManager):
 # Tests                                                    #
 ############################################################
 
+# list_tools ###############################################
+
+@pytest.mark.asyncio
+async def test_list_tools(
+        logger_mock: LoggerMock,
+        loadable_tools_stub: LoadableToolsStub,
+        tool_mock: ToolMock,
+        mcpTestConfigFile: Callable[[str], Path],
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile("reverse"), logger_mock)
+        await mcp_mgr.launch_servers()
+
+        tool_mgr = ToolManager(logger_mock)
+        tool_mgr.load_tools(loadable_tools_stub)
+        tool_mgr.load_tools(mcp_mgr)
+        tool_mgr.add_tool(tool_mock)
+
+        unsorted_tools: list[str] = [t.routing_name for t in loadable_tools_stub.tools]
+        unsorted_tools           += [t.routing_name for t in mcp_mgr.tools]
+        unsorted_tools           += [tool_mock.routing_name]
+
+        expected_tools = sorted(unsorted_tools)
+
+        # Act
+        found_tools: list[str] = tool_mgr.list_tools()
+
+        p_stderr("\ntest_list_tools: expected_tools:") # DEBUG
+        for ut in unsorted_tools: # DEBUG
+            p_stderr(f"\t{ut}") # DEBUG
+
+        p_stderr("\ntest_list_tools: expected_tools:") # DEBUG
+        for et in expected_tools: # DEBUG
+            p_stderr(f"\t{et}") # DEBUG
+
+        p_stderr("\ntest_list_tools: found_tools") # DEBUG
+        for ft in found_tools: # DEBUG
+            p_stderr(f"\t{ft}") # DEBUG
+
+        # Assert
+        assert found_tools == expected_tools
+
+
 # add_tool() ###############################################
 
 @pytest.mark.asyncio
@@ -275,7 +319,7 @@ async def test_builtin_tools_property(
             assert xt in found_builtin_tools
 
 
-# mcp_tools ###############################################
+# mcp_tools ################################################
 
 @pytest.mark.asyncio
 async def test_mcp_tools_property(

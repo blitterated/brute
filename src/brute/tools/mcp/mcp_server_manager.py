@@ -51,7 +51,7 @@ class McpServerManager(LoadableTools):
         return StdioServerParameters(command=spec["command"], args=spec["args"])
 
 
-    async def start_server(self, params: StdioServerParameters) -> ClientSession:
+    async def _start_server(self, params: StdioServerParameters) -> ClientSession:
         """Launch an MCP server process in an async context."""
         read, write = await self._stack.enter_async_context(stdio_client(params))
         session = await self._stack.enter_async_context(ClientSession(read, write))
@@ -70,7 +70,7 @@ class McpServerManager(LoadableTools):
 
             # Start the MCP server and capture its session instance.
             try:
-                session = await self.start_server(params)
+                session = await self._start_server(params)
             except Exception as ex:
                 self._log.error(f"ERROR: launch_servers() failed to start '{routing_name}'\n{ex}")
                 continue

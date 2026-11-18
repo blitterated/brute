@@ -54,6 +54,14 @@ class ToolManager:
         """Call a CallableTool in the ToolManager's collection."""
         self._log.info(f"Tool Call Request:\n\t{name}({args}")
 
+        # TODO: Why do we bail if the tool doesn't exist, but return an error string for any other error?
+        #
+        #       Mainly b/c we should never see a missing tool in regular usage. It's truly exceptional.
+        #       The ones returned as a string are a result of calling a tool's run() method. Any one of
+        #       those could be an MCP tool calling across a network.
+        #
+        #       But still, this really needs to be thought out. Considering a Result monad approach.
+
         # Bail if tool doesn't exist
         if not name in self._tools:
             raise Exception(f"\"{name}\" tool is not in ToolManager's collection.")

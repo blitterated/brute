@@ -315,3 +315,17 @@ async def test_call(
         # Assert
         assert found_result == tool_mock.canned_response
         assert tool_mock.found_args == [tool_args]
+
+
+@pytest.mark.asyncio
+async def test_call_throws_exception_with_missing_tool(logger_mock: LoggerMock):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        tool_mgr = ToolManager(logger_mock)
+
+        bad_routing_name = "vapor_ware"
+        expected_error_msg = f"\"{bad_routing_name}\" tool is not in ToolManager's collection."
+
+        # Act & Assert
+        with pytest.raises(Exception, match=re.escape(expected_error_msg)):
+            await tool_mgr.call(bad_routing_name, {})

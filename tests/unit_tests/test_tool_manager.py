@@ -230,7 +230,7 @@ def _test_remove_tool_with_populated_toolmanager(
 
 
 @pytest.mark.asyncio
-async def test_builtin_tools(
+async def test_builtin_tools_property(
         logger_mock: LoggerMock,
         loadable_tools_stub: LoadableToolsStub,
         tool_mock: ToolMock,
@@ -260,7 +260,7 @@ async def test_builtin_tools(
 
 
 @pytest.mark.asyncio
-async def test_mcp_tools(
+async def test_mcp_tools_property(
         logger_mock: LoggerMock,
         loadable_tools_stub: LoadableToolsStub,
         tool_mock: ToolMock,

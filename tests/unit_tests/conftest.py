@@ -45,8 +45,8 @@ def mcpTestConfigFile(
     This file is used by brute to identify and run MCP servers.
     In this case, it is just a simple string reversing MCP server.
     """
-    def generate(routing_name: str) -> Path:
-        mcpTestConfigContent = mcpTestConfig(routing_name)
+    def generate(*routing_names: str) -> Path:
+        mcpTestConfigContent = mcpTestConfig(*routing_names)
         mcpTestConfigFile = tmp_path / "mcpServers.json"
         mcpTestConfigFile.write_text(mcpTestConfigContent, encoding="utf-8")
         return mcpTestConfigFile

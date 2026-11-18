@@ -155,18 +155,6 @@ async def test_list_tools(
         # Act
         found_tools: list[str] = tool_mgr.list_tools()
 
-        p_stderr("\ntest_list_tools: expected_tools:") # DEBUG
-        for ut in unsorted_tools: # DEBUG
-            p_stderr(f"\t{ut}") # DEBUG
-
-        p_stderr("\ntest_list_tools: expected_tools:") # DEBUG
-        for et in expected_tools: # DEBUG
-            p_stderr(f"\t{et}") # DEBUG
-
-        p_stderr("\ntest_list_tools: found_tools") # DEBUG
-        for ft in found_tools: # DEBUG
-            p_stderr(f"\t{ft}") # DEBUG
-
         # Assert
         assert found_tools == expected_tools
 

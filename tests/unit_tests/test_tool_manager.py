@@ -40,11 +40,10 @@ class LoggerMock(Loggable):
 
 
 class ToolMock(CallableTool):
-    run_args: list[dict] = []
-    canned_run_response = "Your call is important to us. Please hold."
-    run_param_name: str = "motion"
-    run_param_value: str = "ocean"
-    canned_args = { run_param_name: run_param_value }
+    def __init__(self):
+        self.found_args: list[dict] = []
+        self.param_name: str = "airhose"
+        self.canned_response: str = "His airhose broke"
 
     @property
     def routing_name(self) -> str:
@@ -60,19 +59,19 @@ class ToolMock(CallableTool):
                 "parameters": {
                     "type": "object",
                     "properties": {
-                        self.run_param_name: {
+                        self.param_name: {
                             "type": "string",
-                            "description": "Is it in the ocean?",
+                            "description": "Returns a statement of airhose status.",
                         },
                     },
-                    "required": [self.run_param_name],
+                    "required": [self.param_name],
                 },
             },
         }
 
     async def run(self, args: dict) -> str:
-        self.run_args.append(args)
-        return self.canned_run_response
+        self.found_args.append(args)
+        return self.canned_response
 
 
 class LoadableToolsStub(LoadableTools):
@@ -129,12 +128,20 @@ def dump_tools(tool_mgr: ToolManager):
 
 @pytest.mark.asyncio
 async def test_add_tool(logger_mock: LoggerMock, tool_mock: ToolMock):
+    # Arrange
     tool_mgr = ToolManager(logger_mock)
     tool_mgr.add_tool(tool_mock)
 
-    found_result = await tool_mgr.call(tool_mock.routing_name, tool_mock.canned_args)
+    tool_mgr = ToolManager(logger_mock)
+    tool_mgr.add_tool(tool_mock)
 
-    assert found_result == tool_mock.canned_run_response
+    tool_args = { tool_mock.param_name: "broke" }
+
+    # Act
+    found_result = await tool_mgr.call(tool_mock.routing_name, tool_args)
+
+    # Assert
+    assert found_result == tool_mock.canned_response
 
 
 def test_add_tool_throws_exception_with_duplicate_key(logger_mock: LoggerMock, tool_mock: ToolMock):
@@ -288,3 +295,23 @@ async def test_mcp_tools_property(
         assert len(found_mcp_tools) == len(expected_mcp_tools)
         for xt in expected_mcp_tools:
             assert xt in found_mcp_tools
+
+
+@pytest.mark.asyncio
+async def test_call(
+        logger_mock: LoggerMock,
+        tool_mock: ToolMock,
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        tool_mgr = ToolManager(logger_mock)
+        tool_mgr.add_tool(tool_mock)
+
+        tool_args = { tool_mock.param_name: "broke" }
+
+        # Act
+        found_result = await tool_mgr.call(tool_mock.routing_name, tool_args)
+
+        # Assert
+        assert found_result == tool_mock.canned_response
+        assert tool_mock.found_args == [tool_args]

@@ -342,3 +342,28 @@ async def test_call_throws_exception_with_missing_tool(logger_mock: LoggerMock):
         # Act & Assert
         with pytest.raises(Exception, match=re.escape(expected_error_msg)):
             await tool_mgr.call(bad_routing_name, {})
+
+
+#run_implementation
+@pytest.mark.asyncio
+async def test_call_returns_error_message_tool_run_method_failure(
+        logger_mock: LoggerMock,
+        tool_mock: ToolMock,
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        tool_mgr = ToolManager(logger_mock)
+        tool_mgr.add_tool(tool_mock)
+
+        # Force an Exception
+        tool_mock.run_implementation = lambda: str(1/0)
+        expected_error_result = '\n'.join([
+            f"Error running tool call for '{tool_mock.routing_name}':",
+            "ZeroDivisionError: division by zero",
+        ])
+
+        # Act
+        found_result = await tool_mgr.call(tool_mock.routing_name, {})
+
+        # Assert
+        assert found_result == expected_error_result

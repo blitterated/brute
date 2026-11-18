@@ -16,9 +16,9 @@ async def test_mcp(mcpTestConfigFile, std_err_logger):
     async with AsyncExitStack() as stack:
         # Arrange
         test_tool_name = "reverse"
-        test_string = "Pack my box with five-dozen liquor jugs!"
+        test_string = "Pack my box with five dozen liquor jugs!"
         tool_arguments = { "aString": test_string }
-        expected_mcp_tool_response = "\n!sguj rouqil nezod-evif htiw xob ym kcaP"
+        expected_mcp_tool_response = "\n!sguj rouqil nezod evif htiw xob ym kcaP"
 
         mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), std_err_logger)
         await mcp_mgr.launch_servers()

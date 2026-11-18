@@ -31,3 +31,21 @@ async def test_mcp_stack(mcpTestConfigFile, std_err_logger):
 
         # Assert
         assert found_mcp_tool_response == expected_mcp_tool_response
+
+
+@pytest.mark.asyncio
+async def test_tools_property(mcpTestConfigFile, std_err_logger):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        expected_mcp_tools = sorted([f"reverse_{x+1}" for x in range(5)])
+
+        std_err_logger.debug(f"\ntest_tools_property: expected_mcp_tools:\n\t{expected_mcp_tools}") # DEBUG
+
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(*expected_mcp_tools), std_err_logger)
+        await mcp_mgr.launch_servers()
+
+        # Act
+        found_mcp_tools = sorted([mcp.routing_name for mcp in mcp_mgr.tools])
+
+        # Assert
+        assert found_mcp_tools == expected_mcp_tools

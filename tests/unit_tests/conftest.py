@@ -1,5 +1,6 @@
 import json
 import pytest
+import sys
 
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -66,6 +67,8 @@ def mcpTestConfig() -> Callable[[str], str]:
     def generate(*routing_names: str) -> str:
         """Create config for an mcpServers.json config file."""
         mcpServerConfigs: dict[str, dict] = { "mcpServers": {} }
+
+        print(f"\nmcpTestConfig: routing_names:\n\t{routing_names}", file=sys.stderr) # DEBUG
 
         for rtname in routing_names:
             mcpServerConfigs["mcpServers"][rtname] = {

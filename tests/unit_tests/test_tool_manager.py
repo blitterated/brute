@@ -126,6 +126,8 @@ def dump_tools(tool_mgr: ToolManager):
 # Tests                                                    #
 ############################################################
 
+# add_tool() ###############################################
+
 @pytest.mark.asyncio
 async def test_add_tool(logger_mock: LoggerMock, tool_mock: ToolMock):
     # Arrange
@@ -156,6 +158,8 @@ def test_add_tool_throws_exception_with_duplicate_key(logger_mock: LoggerMock, t
         tool_mgr.add_tool(tool_mock)
 
 
+# load_tools() #############################################
+
 def test_load_tools(
         logger_mock: LoggerMock,
         loadable_tools_stub: LoadableToolsStub,
@@ -175,6 +179,8 @@ def test_load_tools(
     for t in expected_tools:
         assert t in found_tools
 
+
+# remove_tool() ############################################
 
 def test_remove_tool_with_empty_toolmanager(logger_mock: LoggerMock, tool_mock: ToolMock):
     tool_mgr = ToolManager(logger_mock)
@@ -236,6 +242,8 @@ def _test_remove_tool_with_populated_toolmanager(
     assert tool_mock.routing_name not in tool_mgr.list_tools()
 
 
+# builtin_tools ############################################
+
 @pytest.mark.asyncio
 async def test_builtin_tools_property(
         logger_mock: LoggerMock,
@@ -265,6 +273,8 @@ async def test_builtin_tools_property(
         for xt in expected_builtin_tools:
             assert xt in found_builtin_tools
 
+
+# mcp_tools ###############################################
 
 @pytest.mark.asyncio
 async def test_mcp_tools_property(
@@ -296,6 +306,8 @@ async def test_mcp_tools_property(
         for xt in expected_mcp_tools:
             assert xt in found_mcp_tools
 
+
+# call ###############################################
 
 @pytest.mark.asyncio
 async def test_call(

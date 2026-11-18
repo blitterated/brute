@@ -44,6 +44,7 @@ class ToolMock(CallableTool):
         self.found_args: list[dict] = []
         self.param_name: str = "airhose"
         self.canned_response: str = "His airhose broke"
+        self.run_implementation: Callable[[], str] = lambda: self.canned_response
 
     @property
     def routing_name(self) -> str:
@@ -71,7 +72,7 @@ class ToolMock(CallableTool):
 
     async def run(self, args: dict) -> str:
         self.found_args.append(args)
-        return self.canned_response
+        return self.run_implementation()
 
 
 class LoadableToolsStub(LoadableTools):

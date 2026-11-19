@@ -296,39 +296,16 @@ async def test_schemas_property(
         tool_mgr.load_tools(mcp_mgr)
         tool_mgr.add_tool(tool_mock)
 
-        # NOTE: Do NOT use `expected_schemas += schema` here
+        # NOTE: Do NOT use `expected_schemas += schema` here. It doesn't add the whole dict.
         expected_schemas: list[dict] = []
         for bt in loadable_tools_stub.tools:
-            p_stderr(f"\nbt: {bt.routing_name}: {bt.schema}") # DEBUG
             expected_schemas.append(bt.schema)
         for mt in mcp_mgr.tools:
-            p_stderr(f"\nmt: {mt.routing_name}: {mt.schema}") # DEBUG
             expected_schemas.append(mt.schema)
         expected_schemas.append(tool_mock.schema)
 
         # Act
         found_schemas: list[dict] = tool_mgr.schemas
-
-
-        p_stderr(f"\ntest_schemas_property: expected_schemas:\n\t{expected_schemas}") # DEBUG
-        p_stderr(f"\ntest_schemas_property: found_schemas:\n\t{found_schemas}") # DEBUG
-
-        p_stderr("\ntest_schemas_property: found_schemas: unsorted:") # DEBUG
-        for s in found_schemas: # DEBUG
-            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
-
-        p_stderr("\ntest_schemas_property: found_schemas: sorted:") # DEBUG
-        for s in sorted(found_schemas, key=lambda s: s["function"]["name"]): # DEBUG
-            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
-
-        p_stderr("\ntest_schemas_property: expected_schemas: unsorted:") # DEBUG
-        for s in expected_schemas: # DEBUG
-            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
-
-        p_stderr("\ntest_schemas_property: expected_schemas: sorted:") # DEBUG
-        for s in sorted(expected_schemas, key=lambda s: s["function"]["name"]): # DEBUG
-            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
-
 
         # Sort the schema collections so we can assert with `==`.
         sort_fn = lambda schema: schema["function"]["name"]

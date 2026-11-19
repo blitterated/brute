@@ -41,6 +41,11 @@ class ToolManager:
 
 
     @property
+    def schemas(self) -> list[dict]:
+        return [tool.schema for _, tool in self._tools.items()]
+
+
+    @property
     def builtin_tools(self) -> dict[str, CallableTool]:
         return {k: v for k, v in self._tools.items() if isinstance(v, BuiltinTool)}
 

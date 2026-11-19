@@ -275,6 +275,71 @@ def _test_remove_tool_with_populated_toolmanager(
     assert tool_mock.routing_name not in tool_mgr.list_tools()
 
 
+# schema ##################################################
+
+@pytest.mark.asyncio
+async def test_schemas_property(
+        logger_mock: LoggerMock,
+        loadable_tools_stub: LoadableToolsStub,
+        tool_mock: ToolMock,
+        mcpTestConfigFile: Callable[[str], Path],
+    ):
+    async with AsyncExitStack() as stack:
+        # Arrange
+        test_tool_name = "reverse"
+
+        mcp_mgr = McpServerManager(stack, mcpTestConfigFile(test_tool_name), logger_mock)
+        await mcp_mgr.launch_servers()
+
+        tool_mgr = ToolManager(logger_mock)
+        tool_mgr.load_tools(loadable_tools_stub)
+        tool_mgr.load_tools(mcp_mgr)
+        tool_mgr.add_tool(tool_mock)
+
+        # NOTE: Do NOT use `expected_schemas += schema` here
+        expected_schemas: list[dict] = []
+        for bt in loadable_tools_stub.tools:
+            p_stderr(f"\nbt: {bt.routing_name}: {bt.schema}") # DEBUG
+            expected_schemas.append(bt.schema)
+        for mt in mcp_mgr.tools:
+            p_stderr(f"\nmt: {mt.routing_name}: {mt.schema}") # DEBUG
+            expected_schemas.append(mt.schema)
+        expected_schemas.append(tool_mock.schema)
+
+        # Act
+        found_schemas: list[dict] = tool_mgr.schemas
+
+
+        p_stderr(f"\ntest_schemas_property: expected_schemas:\n\t{expected_schemas}") # DEBUG
+        p_stderr(f"\ntest_schemas_property: found_schemas:\n\t{found_schemas}") # DEBUG
+
+        p_stderr("\ntest_schemas_property: found_schemas: unsorted:") # DEBUG
+        for s in found_schemas: # DEBUG
+            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
+
+        p_stderr("\ntest_schemas_property: found_schemas: sorted:") # DEBUG
+        for s in sorted(found_schemas, key=lambda s: s["function"]["name"]): # DEBUG
+            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
+
+        p_stderr("\ntest_schemas_property: expected_schemas: unsorted:") # DEBUG
+        for s in expected_schemas: # DEBUG
+            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
+
+        p_stderr("\ntest_schemas_property: expected_schemas: sorted:") # DEBUG
+        for s in sorted(expected_schemas, key=lambda s: s["function"]["name"]): # DEBUG
+            p_stderr(f"\t{s["function"]["name"]}") # DEBUG
+
+
+        # Sort the schema collections so we can assert with `==`.
+        sort_fn = lambda schema: schema["function"]["name"]
+        expected_schemas_sorted = sorted(expected_schemas, key=sort_fn)
+        found_schemas_sorted    = sorted(found_schemas,    key=sort_fn)
+
+        # Assert
+        assert len(found_schemas) == len(expected_schemas)
+        assert expected_schemas_sorted == found_schemas_sorted
+
+
 # builtin_tools ############################################
 
 @pytest.mark.asyncio

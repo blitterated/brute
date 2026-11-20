@@ -418,7 +418,6 @@ async def test_call_throws_exception_with_missing_tool(logger_mock: LoggerMock):
             await tool_mgr.call(bad_routing_name, {})
 
 
-#run_implementation
 @pytest.mark.asyncio
 async def test_call_returns_error_message_tool_run_method_failure(
         logger_mock: LoggerMock,

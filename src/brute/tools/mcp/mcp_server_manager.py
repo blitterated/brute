@@ -17,11 +17,6 @@ from .mcp_tool import McpTool
 
 
 class McpServerManager(LoadableTools):
-    # Project Paths config
-    #_projectRoot = Path(__file__).parent
-    #_mcpConfig = _projectRoot / "mcp_servers.json"
-
-
     def __init__(self, stack: AsyncExitStack, mcpConfigPath: Path, log: Loggable):
         self._stack: AsyncExitStack = stack
         self._log: Loggable = log
